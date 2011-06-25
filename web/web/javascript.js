@@ -124,6 +124,7 @@ function parseMessages(responseXML) {
         if (composers.childNodes.length > 0) {
             completeTable.setAttribute("bordercolor", "black");
             completeTable.setAttribute("border", "1");
+            errField.textContent += composers.childNodes.length +" Composers...\n";
 
             for (loop = 0; loop < composers.childNodes.length; loop++) {
                 var composer = composers.childNodes[loop];

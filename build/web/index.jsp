@@ -9,6 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
         <script type="text/javascript" src="web/javascript.js"></script>
         <title>AJAX Auto-Completion</title>
     </head>
@@ -41,8 +42,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td id="auto-row" colspan="2">
-                            <table id="complete-table" />
+                        <td id="auto-row" colspan="2" >
+                            <table id="complete-table" class="popupBox" />
                         </td>
                     </tr>
                 </tbody>
@@ -53,7 +54,7 @@
         <br/>
         <line />
         <br/>
-        <textarea name="ErrorConsole" id="error-field" rows="10" cols="100" readonly="readonly" />
+        <textarea name="ErrorConsole" id="error-field" rows="10" cols="60" readonly="readonly" />
         
     </body>
 </html>
