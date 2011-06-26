@@ -12,19 +12,30 @@ var completeTable;
 var autoRow;
 
 function init() {
-    completeField = document.getElementById("complete-field");
-    completeTable = document.getElementById("complete-table");
-    autoRow = document.getElementById("auto-row");
-    completeTable.style.top = getElementY(autoRow) + "px";
+    //completeField = document.getElementById("complete-field");
+    
+    caseField = document.getElementById("case-field");
+    resField = document.getElementById("res-field");
+    compsetField = document.getElementById("compset-field");
+    machField = document.getElementById("machine-field");
+    
+    
+    //completeTable = document.getElementById("complete-table");
+    //autoRow = document.getElementById("auto-row");
+    //completeTable.style.top = getElementY(autoRow) + "px";
     errField = document.getElementById("error-field"); // Sam addition
-    errField.textContent = "";
+    errField.textContent = "Start";
 }
 
 function doCompletion() {
-    var url = "autocomplete?action=complete&id="+escape(completeField.value);
-    errField.textContent = "doCompletetion: " + url + "\n";
+    var url = "autocomplete?action=fill"+
+        "&name="+escape(caseField.value)+
+        "&res="+escape(resField.value)+
+        "&compset="+escape(compsetField.value)+
+        "&mach="+escape(machField.value);
+    
+    errField.textContent = "doCompletion: " + url + "\n\n"; // not important
     req = initRequest();
-    //errField.textContent += req.toString() + "\n";
     req.open("GET",url,true);
     req.onreadystatechange = callback;
     req.send(null);
@@ -51,10 +62,10 @@ function initRequest() {
  */
 function callback() {
     
-    clearTable();
-    
+    //clearTable();
     if (req.readyState == 4) {
         if (req.status == 200) {
+            errField.textContent += "callback: "+req.toString()+"\n";
             parseMessages(req.responseXML);
         }
     }
@@ -118,9 +129,11 @@ function parseMessages(responseXML) {
         errField.textContent += "Not Parsing... \n";
         return false;
     } else {
-
-        var composers = responseXML.getElementsByTagName("composers")[0];
         errField.textContent += "Parsing... \n";
+        var createNewCaseScript = responseXML.getElementsByTagName("create_newcase")[0].childNodes[0].nodeValue;
+        errField.textContent += "\n-----\n" + createNewCaseScript + "\n-----\n";
+        /*
+        var composers = responseXML.getElementsByTagName("composers")[0];
         if (composers.childNodes.length > 0) {
             completeTable.setAttribute("bordercolor", "black");
             completeTable.setAttribute("border", "1");
@@ -135,6 +148,6 @@ function parseMessages(responseXML) {
                     lastName.childNodes[0].nodeValue,
                     composerId.childNodes[0].nodeValue);
             }
-        }
+        }*/
     }
 }

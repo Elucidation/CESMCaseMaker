@@ -16,6 +16,13 @@ body {
     width: 650px;
 }
 
+/* By Sam */
+code {
+    
+    font-family: monospace;
+    color: #666666;
+}
+
 h1 {
     letter-spacing: 6px;
     font-size: 1.6em;
@@ -24,49 +31,49 @@ h1 {
 }
 
 h2 {
-   text-align: left;
-   letter-spacing: 6px;
-   font-size: 1.4em;
-   color: #be7429;
-   font-weight: normal;
-   width: 450px;
+    text-align: left;
+    letter-spacing: 6px;
+    font-size: 1.4em;
+    color: #be7429;
+    font-weight: normal;
+    width: 450px;
 }
 
 table {
-   width: 550px;
-   padding: 10px;
-   background-color: #c5e7e0;
+    width: 550px;
+    padding: 1px;
+    background-color: #eff0ef;
 }
 
 td {
-   padding: 10px;
+    padding: 5px;
 }
 
 a {
-  color: #be7429;
-  text-decoration: none;
+    color: #be7429;
+    text-decoration: none;
 }
 
 a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
 .popupBox {
-  position: absolute;
-  top: 170px;
-  left: 140px;
+    position: absolute;
+    top: 170px;
+    left: 140px;
 }
 
 .popupCell {
-   background-color: #fffafa;
+    background-color: #fffafa;
 }
 
 .popupCell:hover {
-  background-color: #f5ebe9;
+    background-color: #f5ebe9;
 }
 
 .popupItem {
-  color: #333;
-  text-decoration: none;
-  font-size: 0.8em;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.8em;
 }

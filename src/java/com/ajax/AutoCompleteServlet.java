@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AutoCompleteServlet extends HttpServlet {
 
     private ServletContext context;
-    private ComposerData compData  = new ComposerData();
+    private ComposerData compData = new ComposerData();
     private HashMap composers = compData.getComposers();
 
     @Override
@@ -72,52 +72,26 @@ public class AutoCompleteServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        String targetId = request.getParameter("id");
-        StringBuffer sb = new StringBuffer();
+        
+        String casename = request.getParameter("name");
+        String resolution = request.getParameter("res");
+        String compset = request.getParameter("compset");
+        String machine = request.getParameter("mach");
+         
+        //StringBuffer sb = new StringBuffer();
 
-        if (targetId != null) {
-            targetId = targetId.trim().toLowerCase();
+        // On Error
+        //context.getRequestDispatcher("/error.jsp").forward(request, response);
+
+        if (action.equals("fill")) {
+            CaseTemplate template = new CaseTemplate();
+            response.setContentType("text/xml");
+            response.setHeader("Cache-Control", "no-cache");
+            String filledTemplate = template.fillTemplate(casename, resolution, compset, machine);
+            response.getWriter().write("<create_newcase>"+filledTemplate+"</create_newcase>");
         } else {
-            context.getRequestDispatcher("/error.jsp").forward(request, response);
-        }
-
-        boolean namesAdded = false;
-        if (action.equals("complete")) {
-
-            // check if user sent empty string
-            if (!targetId.equals("")) {
-
-                Iterator it = composers.keySet().iterator();
-
-                while (it.hasNext()) {
-                    String id = (String) it.next();
-                    Composer composer = (Composer) composers.get(id);
-
-                    if ( // targetId matches first name
-                            composer.getFirstName().toLowerCase().startsWith(targetId)
-                            || // targetId matches last name
-                            composer.getLastName().toLowerCase().startsWith(targetId)
-                            || // targetId matches full name
-                            composer.getFirstName().toLowerCase().concat(" ").concat(composer.getLastName().toLowerCase()).startsWith(targetId)) {
-
-                        sb.append("<composer>");
-                        sb.append("<id>" + composer.getId() + "</id>");
-                        sb.append("<firstName>" + composer.getFirstName() + "</firstName>");
-                        sb.append("<lastName>" + composer.getLastName() + "</lastName>");
-                        sb.append("</composer>");
-                        namesAdded = true;
-                    }
-                }
-            }
-
-            if (namesAdded) {
-                response.setContentType("text/xml");
-                response.setHeader("Cache-Control", "no-cache");
-                response.getWriter().write("<composers>" + sb.toString() + "</composers>");
-            } else {
-                //nothing to show
-                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-            }
+            //nothing to show
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
     }
 
