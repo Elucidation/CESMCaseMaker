@@ -38,14 +38,6 @@ public class CaseTemplate {
 
         } catch (Exception ex) {
             System.err.println("Error: Couldn't read/find template file " + templateFileLocation + "\n> " + ex.getMessage());
-
-            // Hardcoded template, won't work anymore
-            /*
-            templateOriginal = "create_newcase -case <CASENAME>"
-                    + " -res <RESOLUTION>"
-                    + " -compset <COMPSET>"
-                    + " -mach <MACHINE> \n\n" + ex.getMessage();
-             */
             templateOriginal = "Error finding/loading template file: "+ex.getMessage();
         }
         templatePopulated = templateOriginal;
@@ -56,9 +48,12 @@ public class CaseTemplate {
      */
     public void resetPopulatedTemplate() {
         templatePopulated = templateOriginal;
+        caseRoot = "scripts/CASENAME";
     }
     
-    public String get() {
+    public String get() { 
+        // Important note, replaceAll fails miserably with many special characters like $
+        // Also, since this return is used by XML parser wonky '<>' stuff will mess it up
         return templatePopulated.replaceAll("ENVCONF", envConf);
     }
 
@@ -85,6 +80,8 @@ public class CaseTemplate {
                 templatePopulated = templatePopulated.replaceAll(fillers[i], replacements[i].trim()); // Added trim
             }
         }
+        
+        caseRoot = "scripts/"+casename;
 
         // Have to do this or XML parser goes wonky
         //templatePopulated = templatePopulated.replaceAll("<", "").replaceAll(">", "");
@@ -105,19 +102,12 @@ public class CaseTemplate {
                 envConf += caseRoot + "/" + xmlChange(caseRoot + "env_conf.xml", names[i], values[i]);
             }
         }
+        
+        // Add header comment if there are edits
         if (!envConf.isEmpty()) {
             envConf = "# Edits to file 'env_conf.xml'" + "\n" + envConf;
         }
         
-        /*
-        if (!runType.isEmpty() && !runType.equalsIgnoreCase("startup")) {
-            // If runType is branched or hybrid add in xmlchange (it's defaulted to startup already)
-            envConf += caseRoot + xmlChange(caseRoot + "env_conf.xml", "RUN_TYPE", runType); // hardcoded RUN_TYPE, must be changed eventually
-        }
-        if (startDate != null && !startDate.equalsIgnoreCase("0001-01-01")) {
-            // If startDate exists (runtype=startup/hybrid) & not default
-            envConf += caseRoot + xmlChange(caseRoot + "env_conf.xml", "RUN_STARTDATE", startDate); // hardcoded RUN_STARTDATE, must be changed eventually
-        }*/
     }
 
     /**

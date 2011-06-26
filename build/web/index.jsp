@@ -85,31 +85,7 @@
 
                                         </td>
                                     </tr>
-                                    <tr> <!-- Row 5 -->
-                                        <td>Type of run:</td>
-                                        <td>
-                                            <select name="runType" 
-                                                    id="runType-field"
-                                                    onchange="doEnvConfAdd();">
-                                                <option>Startup</option>
-                                                <option>Branched</option>
-                                                <option>Hybrid</option>
-                                            </select>
-
-                                        </td>
-                                    </tr>
-
-                                    <tr id="startdateRow"> <!-- Row 6 -->
-                                        <td>Start date:</td>
-                                        <td>
-                                            <input type="text" 
-                                                   name="start date" 
-                                                   id="startDate-field"
-                                                   value="0001-01-01"
-                                                   onkeyup="doEnvConfAdd();"/>
-
-                                        </td>
-                                    </tr>
+                                    <table id="envConfig-table"/>
 
                                 </tbody>
                             </table>
@@ -130,7 +106,7 @@
             <li>Start Date is only used when the run type is a startup or 
                 hybrid, since a branched run has it's start date as the end 
                 of the branch.</li>
-            <li>Start Date disappears when not needed, as does the template
+            <li>Disabled - Start Date disappears when not needed, as does the template
                 effect, these sort of relationships can be mapped accurately 
                 using an <a href="http://en.wikipedia.org/wiki/Web_Ontology_Language">OWL ontology</a> 
                 (or for just deduction & speed, an sql database), 

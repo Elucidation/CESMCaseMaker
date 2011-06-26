@@ -6,8 +6,6 @@ package com.ajax;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Iterator;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -77,31 +75,38 @@ public class AutoCompleteServlet extends HttpServlet {
         //context.getRequestDispatcher("/error.jsp").forward(request, response);
 
         if (action.equals("fill")) {
+            // Paramters passed in
             String casename = request.getParameter("name");
             String resolution = request.getParameter("res");
             String compset = request.getParameter("compset");
             String machine = request.getParameter("mach");
-
-
+            
+            //  Send Response
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
             template.resetPopulatedTemplate();
             template.fillTemplate(casename, resolution, compset, machine);
-            String filledTemplate = template.get();
-            response.getWriter().write("<create_newcase>" + filledTemplate + "</create_newcase>");
-        } 
-        else if (action.equals("fillEnvConf")) {
+            response.getWriter().write("<create_newcase>" + template.get() + "</create_newcase>");
+        } else if (action.equals("fillEnvConf")) {
+            // Paramters passed in
             String runType = request.getParameter("runType");
             String startDate = request.getParameter("startDate");
 
             // Add env_conf.xml options to template
+            //  Send Response
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
             template.fillEnvConf(runType, startDate);
-            String filledTemplate = template.get();
-            response.getWriter().write("<create_newcase>" + filledTemplate + "</create_newcase>");
-        } 
-        else {
+            response.getWriter().write("<create_newcase>" + template.get() + "</create_newcase>");
+        } else if (action.equals("loadOptionsEnvConf")) {
+            // Set up visible options table in index.jsp
+            //System.err.println("Got called by loadOptionsEnvConf.");
+            //  Send Response
+            response.setContentType("text/xml");
+            response.setHeader("Cache-Control", "no-cache");
+            String envConfTableXML = "bloop";
+            response.getWriter().write("<env_conf>" + envConfTableXML + "</env_conf>");
+        } else {
             //nothing to show
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }

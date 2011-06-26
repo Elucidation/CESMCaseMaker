@@ -12,6 +12,7 @@ var completeTable;
 var autoRow;
 
 function init() {
+    // Called every time page is loaded supposedly (boady onload in index.jsp)
     //completeField = document.getElementById("complete-field");
     
     caseField = document.getElementById("case-field");
@@ -20,18 +21,16 @@ function init() {
     machField = document.getElementById("machine-field");
     
     
-    // env.conf variables
-    runTypeField = document.getElementById("runType-field");
-    startDateField = document.getElementById("startDate-field");
+    envConfigTable = document.getElementById("envConfig-table");
     
-    optionsTable = document.getElementById("options-table");
-    startdateRowField = document.getElementById("startdateRow");
     //completeTable = document.getElementById("complete-table");
     //autoRow = document.getElementById("auto-row");
     //completeTable.style.top = getElementY(autoRow) + "px";
     templateField = document.getElementById("template-field");
     templateField.textContent = "";
+    
     doCompletion(); // So it's not empty on startup, uses whatever values in fields'
+    doLoadOptions(); // Set up available options initially
 //templateField.textContent = "Start";
 }
 
@@ -40,8 +39,7 @@ function doCompletion() {
     "&name="+escape(caseField.value)+
     "&res="+escape(resField.value)+
     "&compset="+escape(compsetField.value)+
-    "&mach="+escape(machField.value)+
-    "&runType="+escape(runTypeField.value);
+    "&mach="+escape(machField.value);
     
     //templateField.textContent = "doCompletion: " + url + "\n\n"; // not important
     
@@ -60,6 +58,14 @@ function doCompletion() {
     req.send(null);
 }
 
+function doLoadOptions() {
+    var url = "autocomplete?action=loadOptionsEnvConf";
+    req = initRequest();
+    req.open("GET",url,true);
+    req.onreadystatechange = callback;
+    req.send(null);
+}
+
 function doEnvConfAdd() {
     var url = "autocomplete?action=fillEnvConf"+
     "&runType="+escape(runTypeField.value)+
@@ -69,7 +75,14 @@ function doEnvConfAdd() {
     
     // This kind of hard-coded logic needs to be moved to java, and further to SQL
     // it will get way too complicated at this rate.
-    /*if (escape(runTypeField.value) == "Branched") {
+    /*// env.conf variables
+    runTypeField = document.getElementById("runType-field");
+    startDateField = document.getElementById("startDate-field");
+    
+    optionsTable = document.getElementById("options-table");
+    startdateRowField = document.getElementById("startdateRow");
+     *
+     *if (escape(runTypeField.value) == "Branched") {
         startdateRowField.hidden = true;
     } else {
         startdateRowField.hidden = false;
@@ -102,7 +115,6 @@ function initRequest() {
 function callback() {
     if (req.readyState == 4) {
         if (req.status == 200) {
-            //templateField.textContent += "callback: "+req.toString()+"\n";
             parseMessages(req.responseXML);
         }
     }
@@ -111,27 +123,49 @@ function callback() {
 function addOption() {
     var row;
     var cell;
-    var linkElement;
+    var value = "test";
 
     if (isIE) {
-        optionsTable.style.display = 'block';
-        row = optionsTable.insertRow(optionsTable.rows.length);
+        envConfigTable.style.display = 'block';
+        row = envConfigTable.insertRow(envconfigTable.rows.length);
         cell = row.insertCell(0);
     } else {
-        optionsTable.style.display = 'table';
+        envConfigTable.style.display = 'table';
         row = document.createElement("tr");
         cell = document.createElement("td");
         row.appendChild(cell);
-        optionsTable.appendChild(row);
+        envConfigTable.appendChild(row);
     }
-/*.
+    textNode = document.createTextNode(value);
+    cell.appendChild(textNode);
+        
+            
+            
+/*<tr> <!-- Row 5 -->
+                                        <td>Type of run:</td>
+                                        <td>
+                                            <select name="runType" 
+                                                    id="runType-field"
+                                                    onchange="doEnvConfAdd();">
+                                                <option>Startup</option>
+                                                <option>Branched</option>
+                                                <option>Hybrid</option>
+                                            </select>
 
-    linkElement = document.createElement("a");
-    linkElement.className = "popupItem";
-    linkElement.setAttribute("href", "autocomplete?action=lookup&id=" + composerId);
-    linkElement.appendChild(document.createTextNode(firstName + " " + lastName));
-    cell.appendChild(linkElement)
-    */
+                                        </td>
+                                    </tr>
+
+                                    <tr id="startdateRow"> <!-- Row 6 -->
+                                        <td>Start date:</td>
+                                        <td>
+                                            <input type="text" 
+                                                   name="start date" 
+                                                   id="startDate-field"
+                                                   value="0001-01-01"
+                                                   onkeyup="doEnvConfAdd();"/>
+
+                                        </td>
+                                    </tr> */
 }
 
 function appendComposer(firstName,lastName,composerId) {
@@ -186,19 +220,23 @@ function clearTable() {
 }
 
 function parseMessages(responseXML) {
-
-    // no matches returned
     if (responseXML == null) {
-        templateField.textContent += "Not Parsing... \n";
+        templateField.textContent += "--Null Response--\n";
         return false;
+    } else if (responseXML.getElementsByTagName("create_newcase").length != 0){
+        templateField.textContent = responseXML.getElementsByTagName("create_newcase")[0].childNodes[0].nodeValue;
+    } else if (responseXML.getElementsByTagName("env_conf").length != 0){
+        templateField.textContent = responseXML.getElementsByTagName("env_conf")[0].childNodes[0].nodeValue;
+        addOption();
+        
     } else {
-        //templateField.textContent += "Parsing... \n";
-        
-        var createNewCaseScript = responseXML.getElementsByTagName("create_newcase")[0].childNodes[0].nodeValue;
-        //templateField.textContent += "\n-----\n" + createNewCaseScript + "\n-----\n";
-        
-        templateField.textContent = createNewCaseScript;
-    /*
+        templateField.textContent = "--Bad Response--\n";
+        return false;
+    }
+    
+}
+
+/*
         var composers = responseXML.getElementsByTagName("composers")[0];
         if (composers.childNodes.length > 0) {
             completeTable.setAttribute("bordercolor", "black");
@@ -215,5 +253,3 @@ function parseMessages(responseXML) {
                     composerId.childNodes[0].nodeValue);
             }
         }*/
-    }
-}
