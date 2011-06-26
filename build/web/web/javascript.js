@@ -23,9 +23,9 @@ function init() {
     //completeTable = document.getElementById("complete-table");
     //autoRow = document.getElementById("auto-row");
     //completeTable.style.top = getElementY(autoRow) + "px";
-    errField = document.getElementById("error-field"); // Sam addition
-    errField.textContent = "";
-    //errField.textContent = "Start";
+    templateField = document.getElementById("template-field"); // Sam addition
+    templateField.textContent = "";
+    //templateField.textContent = "Start";
 }
 
 function doCompletion() {
@@ -35,7 +35,7 @@ function doCompletion() {
         "&compset="+escape(compsetField.value)+
         "&mach="+escape(machField.value);
     
-    //errField.textContent = "doCompletion: " + url + "\n\n"; // not important
+    //templateField.textContent = "doCompletion: " + url + "\n\n"; // not important
     req = initRequest();
     req.open("GET",url,true);
     req.onreadystatechange = callback;
@@ -64,7 +64,7 @@ function initRequest() {
 function callback() {
     if (req.readyState == 4) {
         if (req.status == 200) {
-            //errField.textContent += "callback: "+req.toString()+"\n";
+            //templateField.textContent += "callback: "+req.toString()+"\n";
             parseMessages(req.responseXML);
         }
     }
@@ -125,19 +125,19 @@ function parseMessages(responseXML) {
 
     // no matches returned
     if (responseXML == null) {
-        errField.textContent += "Not Parsing... \n";
+        templateField.textContent += "Not Parsing... \n";
         return false;
     } else {
-        //errField.textContent += "Parsing... \n";
+        //templateField.textContent += "Parsing... \n";
         var createNewCaseScript = responseXML.getElementsByTagName("create_newcase")[0].childNodes[0].nodeValue;
-        //errField.textContent += "\n-----\n" + createNewCaseScript + "\n-----\n";
-        errField.textContent = createNewCaseScript;
+        //templateField.textContent += "\n-----\n" + createNewCaseScript + "\n-----\n";
+        templateField.textContent = createNewCaseScript;
         /*
         var composers = responseXML.getElementsByTagName("composers")[0];
         if (composers.childNodes.length > 0) {
             completeTable.setAttribute("bordercolor", "black");
             completeTable.setAttribute("border", "1");
-            errField.textContent += composers.childNodes.length +" Composers...\n";
+            templateField.textContent += composers.childNodes.length +" Composers...\n";
 
             for (loop = 0; loop < composers.childNodes.length; loop++) {
                 var composer = composers.childNodes[loop];

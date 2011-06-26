@@ -56,7 +56,7 @@ public class CaseTemplate {
 
         for (int i = 0; i < fillers.length; i++) {
             if (!replacements[i].isEmpty()) {
-                populatedTemplate = populatedTemplate.replaceAll(fillers[i], replacements[i]);
+                populatedTemplate = populatedTemplate.replaceAll(fillers[i], replacements[i].trim()); // Added trim
             }
         }
         

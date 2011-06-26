@@ -83,7 +83,7 @@
                             <!-- OPTIONS END -->
                         </td>
                         <td>
-                            <textarea name="ErrorConsole" id="error-field" rows="20" cols="60"></textarea>
+                            <textarea id="template-field" rows="20" cols="80"></textarea>
                         </td>
                     </tr>
                 </tbody>

@@ -24,7 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 public class AutoCompleteServlet extends HttpServlet {
 
     private ServletContext context;
-
+    private CaseTemplate template = new CaseTemplate();
+    
     @Override
     public void init(ServletConfig config) throws ServletException {
         this.context = config.getServletContext();
@@ -82,7 +83,6 @@ public class AutoCompleteServlet extends HttpServlet {
         //context.getRequestDispatcher("/error.jsp").forward(request, response);
 
         if (action.equals("fill")) {
-            CaseTemplate template = new CaseTemplate();
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
             String filledTemplate = template.fillTemplate(casename, resolution, compset, machine);
