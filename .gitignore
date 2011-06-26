@@ -4,6 +4,8 @@
 #netbeans ignore personal stuff 
 nbproject/private/
 
+#netbeans ignore distribution as it can be built from source
+dist/
 
 ## generic files to ignore
 *~
