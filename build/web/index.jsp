@@ -90,7 +90,7 @@
                                         <td>
                                             <select name="runType" 
                                                     id="runType-field"
-                                                    onkeyup="doCompletion();">
+                                                    onchange="doCompletion();">
                                                 <option>Startup</option>
                                                 <option>Branched</option>
                                                 <option>Hybrid</option>
