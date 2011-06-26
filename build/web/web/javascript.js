@@ -31,6 +31,7 @@ function init() {
     //completeTable.style.top = getElementY(autoRow) + "px";
     templateField = document.getElementById("template-field");
     templateField.textContent = "";
+    doCompletion(); // So it's not empty on startup, uses whatever values in fields'
 //templateField.textContent = "Start";
 }
 

@@ -16,13 +16,6 @@ body {
     width: 650px;
 }
 
-/* By Sam */
-code {
-    
-    font-family: monospace;
-    color: #666666;
-}
-
 h1 {
     letter-spacing: 6px;
     font-size: 1.6em;
@@ -75,4 +68,20 @@ a:hover {
     color: #333;
     text-decoration: none;
     font-size: 0.8em;
+}
+
+/* By Sam */
+code {
+
+    font-family: monospace;
+    color: #666666;
+}
+
+smallNote {
+    font-size: 0.9em;
+    font-family: sans-serif;
+}
+
+li {
+    padding-bottom: 8px;
 }
