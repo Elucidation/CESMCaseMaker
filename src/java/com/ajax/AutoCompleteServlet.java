@@ -25,7 +25,7 @@ public class AutoCompleteServlet extends HttpServlet {
 
     private ServletContext context;
     private CaseTemplate template = new CaseTemplate();
-    
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         this.context = config.getServletContext();
@@ -71,25 +71,37 @@ public class AutoCompleteServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        
-        String casename = request.getParameter("name");
-        String resolution = request.getParameter("res");
-        String compset = request.getParameter("compset");
-        String machine = request.getParameter("mach");
-        
-        String runType = request.getParameter("runType");
-        String startDate = request.getParameter("startDate");
         //StringBuffer sb = new StringBuffer();
 
         // On Error
         //context.getRequestDispatcher("/error.jsp").forward(request, response);
 
         if (action.equals("fill")) {
+            String casename = request.getParameter("name");
+            String resolution = request.getParameter("res");
+            String compset = request.getParameter("compset");
+            String machine = request.getParameter("mach");
+
+
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
-            String filledTemplate = template.fillTemplate(casename, resolution, compset, machine, runType, startDate);
-            response.getWriter().write("<create_newcase>"+filledTemplate+"</create_newcase>");
-        } else {
+            template.resetPopulatedTemplate();
+            template.fillTemplate(casename, resolution, compset, machine);
+            String filledTemplate = template.get();
+            response.getWriter().write("<create_newcase>" + filledTemplate + "</create_newcase>");
+        } 
+        else if (action.equals("fillEnvConf")) {
+            String runType = request.getParameter("runType");
+            String startDate = request.getParameter("startDate");
+
+            // Add env_conf.xml options to template
+            response.setContentType("text/xml");
+            response.setHeader("Cache-Control", "no-cache");
+            template.fillEnvConf(runType, startDate);
+            String filledTemplate = template.get();
+            response.getWriter().write("<create_newcase>" + filledTemplate + "</create_newcase>");
+        } 
+        else {
             //nothing to show
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }

@@ -90,7 +90,7 @@
                                         <td>
                                             <select name="runType" 
                                                     id="runType-field"
-                                                    onchange="doCompletion();">
+                                                    onchange="doEnvConfAdd();">
                                                 <option>Startup</option>
                                                 <option>Branched</option>
                                                 <option>Hybrid</option>
@@ -106,7 +106,7 @@
                                                    name="start date" 
                                                    id="startDate-field"
                                                    value="0001-01-01"
-                                                   onkeyup="doCompletion();"/>
+                                                   onkeyup="doEnvConfAdd();"/>
 
                                         </td>
                                     </tr>

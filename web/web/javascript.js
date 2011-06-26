@@ -47,12 +47,33 @@ function doCompletion() {
     
     // This kind of hard-coded logic needs to be moved to java, and further to SQL
     // it will get way too complicated at this rate.
+    /*
     if (escape(runTypeField.value) == "Branched") {
         startdateRowField.hidden = true;
     } else {
         startdateRowField.hidden = false;
         url += "&startDate="+escape(startDateField.value);
-    }
+    }*/
+    req = initRequest();
+    req.open("GET",url,true);
+    req.onreadystatechange = callback;
+    req.send(null);
+}
+
+function doEnvConfAdd() {
+    var url = "autocomplete?action=fillEnvConf"+
+    "&runType="+escape(runTypeField.value)+
+    "&startDate="+escape(startDateField.value);
+    
+    //templateField.textContent = "doCompletion: " + url + "\n\n"; // not important
+    
+    // This kind of hard-coded logic needs to be moved to java, and further to SQL
+    // it will get way too complicated at this rate.
+    /*if (escape(runTypeField.value) == "Branched") {
+        startdateRowField.hidden = true;
+    } else {
+        startdateRowField.hidden = false;
+    }*/
     req = initRequest();
     req.open("GET",url,true);
     req.onreadystatechange = callback;
@@ -172,6 +193,7 @@ function parseMessages(responseXML) {
         return false;
     } else {
         //templateField.textContent += "Parsing... \n";
+        
         var createNewCaseScript = responseXML.getElementsByTagName("create_newcase")[0].childNodes[0].nodeValue;
         //templateField.textContent += "\n-----\n" + createNewCaseScript + "\n-----\n";
         
