@@ -1,4 +1,4 @@
-CESMCaseMaker
+CESMCaseMaker - Possibly running live @ http://c3-test.elasticbeanstalk.com/
 ---------------------------------------------
 CESM stands for the Community Earth System Model (http://www.cesm.ucar.edu/)
 used for running simulations of the earth's climate.
