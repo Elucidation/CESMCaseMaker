@@ -1,0 +1,23 @@
+#!/bin/bash
+# This file must be placed in the root directory of your CESM source code
+# For example: '~/home/cesm1_0', referred to from here on as $CESM_ROOT
+#
+# This script creates a new CESM case named '<CASENAME>' 
+# located in the $CESM_ROOT/scripts/<CASENAME> directory.
+# It then configures, builds and runs the case.
+
+echo "Creating new case..."
+./scripts/create_newcase -case <CASENAME> -res <RESOLUTION> -compset <COMPSET> -mach <MACHINE>
+
+echo "Configuring case..."
+./scripts/<CASENAME>/configure -case
+
+
+echo "Building case..."
+./scripts/<CASENAME>/<CASENAME>.<MACHINE>.clean_build
+./scripts/<CASENAME>/<CASENAME>.<MACHINE>.build
+
+echo "Running simulation..."
+./scripts/<CASENAME>/<CASENAME>.<MACHINE>.run
+
+echo "Run complete."

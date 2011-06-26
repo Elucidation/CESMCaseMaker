@@ -24,7 +24,8 @@ function init() {
     //autoRow = document.getElementById("auto-row");
     //completeTable.style.top = getElementY(autoRow) + "px";
     errField = document.getElementById("error-field"); // Sam addition
-    errField.textContent = "Start";
+    errField.textContent = "";
+    //errField.textContent = "Start";
 }
 
 function doCompletion() {
@@ -34,7 +35,7 @@ function doCompletion() {
         "&compset="+escape(compsetField.value)+
         "&mach="+escape(machField.value);
     
-    errField.textContent = "doCompletion: " + url + "\n\n"; // not important
+    //errField.textContent = "doCompletion: " + url + "\n\n"; // not important
     req = initRequest();
     req.open("GET",url,true);
     req.onreadystatechange = callback;
@@ -61,11 +62,9 @@ function initRequest() {
  * 4	complete
  */
 function callback() {
-    
-    //clearTable();
     if (req.readyState == 4) {
         if (req.status == 200) {
-            errField.textContent += "callback: "+req.toString()+"\n";
+            //errField.textContent += "callback: "+req.toString()+"\n";
             parseMessages(req.responseXML);
         }
     }
@@ -129,9 +128,10 @@ function parseMessages(responseXML) {
         errField.textContent += "Not Parsing... \n";
         return false;
     } else {
-        errField.textContent += "Parsing... \n";
+        //errField.textContent += "Parsing... \n";
         var createNewCaseScript = responseXML.getElementsByTagName("create_newcase")[0].childNodes[0].nodeValue;
-        errField.textContent += "\n-----\n" + createNewCaseScript + "\n-----\n";
+        //errField.textContent += "\n-----\n" + createNewCaseScript + "\n-----\n";
+        errField.textContent = createNewCaseScript;
         /*
         var composers = responseXML.getElementsByTagName("composers")[0];
         if (composers.childNodes.length > 0) {

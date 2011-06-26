@@ -83,14 +83,9 @@
                             <!-- OPTIONS END -->
                         </td>
                         <td>
-                            <textarea name="ErrorConsole" id="error-field" rows="10" cols="60"></textarea>
+                            <textarea name="ErrorConsole" id="error-field" rows="20" cols="60"></textarea>
                         </td>
-                    </tr> <!--
-                    <tr>
-                        <td id="auto-row" colspan="2" >
-                            <table id="complete-table" class="popupBox" />
-                        </td>
-                    </tr> -->
+                    </tr>
                 </tbody>
             </table>
 

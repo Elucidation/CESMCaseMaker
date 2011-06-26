@@ -24,8 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 public class AutoCompleteServlet extends HttpServlet {
 
     private ServletContext context;
-    private ComposerData compData = new ComposerData();
-    private HashMap composers = compData.getComposers();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
