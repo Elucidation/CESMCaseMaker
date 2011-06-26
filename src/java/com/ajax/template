@@ -3,21 +3,23 @@
 # For example: '~/home/cesm1_0', referred to from here on as $CESM_ROOT
 #
 # This script creates a new CESM case named '<CASENAME>' 
-# located in the $CESM_ROOT/scripts/<CASENAME> directory.
+# located in the $CESM_ROOT/<CASEROOT> directory.
 # It then configures, builds and runs the case.
 
 echo "Creating new case..."
-./scripts/create_newcase -case <CASENAME> -res <RESOLUTION> -compset <COMPSET> -mach <MACHINE>
+scripts/create_newcase -case <CASENAME> -res <RESOLUTION> -compset <COMPSET> -mach <MACHINE>
 
+<ENV CONF>
 echo "Configuring case..."
-./scripts/<CASENAME>/configure -case
+<CASEROOT>configure -cleanall
+<CASEROOT>configure -case
 
 
 echo "Building case..."
-./scripts/<CASENAME>/<CASENAME>.<MACHINE>.clean_build
-./scripts/<CASENAME>/<CASENAME>.<MACHINE>.build
+<CASEROOT><CASENAME>.<MACHINE>.clean_build
+<CASEROOT><CASENAME>.<MACHINE>.build
 
 echo "Running simulation..."
-./scripts/<CASENAME>/<CASENAME>.<MACHINE>.run
+<CASEROOT><CASENAME>.<MACHINE>.run
 
 echo "Run complete."

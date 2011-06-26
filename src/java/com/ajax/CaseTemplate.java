@@ -48,12 +48,35 @@ public class CaseTemplate {
     public String fillTemplate(String casename,
             String resolution,
             String compset,
-            String machine) {
+            String machine,
+            String runType,
+            String startDate) {
 
-        String[] fillers = {"<CASENAME>", "<RESOLUTION>", "<COMPSET>", "<MACHINE>"};
-        String[] replacements = {casename, resolution, compset, machine};
+        String[] fillers = {"<CASEROOT>","<CASENAME>", "<RESOLUTION>", "<COMPSET>", "<MACHINE>"};
+        String caseRoot = "scripts/<CASENAME>/";
+        String[] replacements = {caseRoot,casename, resolution, compset, machine};
         String populatedTemplate = template;
+        
+        // ENV_CONF.XML Variables
+        String envConf = "";
+        
+        if (!runType.isEmpty() && !runType.equalsIgnoreCase("startup")) {
+            // If runType is branched or hybrid add in xmlchange (it's defaulted to startup already)
+            envConf += caseRoot+xmlChange(caseRoot+"env_conf.xml", "RUN_TYPE", runType); // hardcoded RUN_TYPE, must be changed eventually
+        }
+        if (startDate != null && !startDate.equalsIgnoreCase("0001-01-01")) {
+            // If startDate exists (runtype=startup/hybrid) & not default
+            envConf += caseRoot+xmlChange(caseRoot+"env_conf.xml", "RUN_STARTDATE", startDate); // hardcoded RUN_STARTDATE, must be changed eventually
+        }
+        
+        if (!envConf.isEmpty()) {
+            envConf = "# Edits to file 'env_conf.xml'"+ "\n" + envConf;
+        }
 
+        populatedTemplate = populatedTemplate.replaceAll("<ENV CONF>", envConf);
+        
+        
+        // Main create case & directory replaces, must run after all XML configs
         for (int i = 0; i < fillers.length; i++) {
             if (!replacements[i].isEmpty()) {
                 populatedTemplate = populatedTemplate.replaceAll(fillers[i], replacements[i].trim()); // Added trim
@@ -64,6 +87,18 @@ public class CaseTemplate {
         populatedTemplate = populatedTemplate.replaceAll("<", "").replaceAll(">", "");
 
         return populatedTemplate;
+    }
+    /**
+     * Syntax for invoking CESM's xmlchange script
+     * @param file The xml file to be edited.
+     * @param id The xml variable name to be changed.
+     * @param value The intended value of the variable associated with the -id argument.
+     * @return String for invoking xmlchange w/ passed parameters
+     */
+    public static String xmlChange(String file, String id, String value) {
+        return "xmlchange -file " + file
+                + " -id " + id
+                + " -val " + value + "\n";
     }
 
     /** Read a File to a string

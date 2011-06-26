@@ -20,22 +20,38 @@ function init() {
     machField = document.getElementById("machine-field");
     
     
+    // env.conf variables
+    runTypeField = document.getElementById("runType-field");
+    startDateField = document.getElementById("startDate-field");
+    
+    optionsTable = document.getElementById("options-table");
+    startdateRowField = document.getElementById("startdateRow");
     //completeTable = document.getElementById("complete-table");
     //autoRow = document.getElementById("auto-row");
     //completeTable.style.top = getElementY(autoRow) + "px";
-    templateField = document.getElementById("template-field"); // Sam addition
+    templateField = document.getElementById("template-field");
     templateField.textContent = "";
-    //templateField.textContent = "Start";
+//templateField.textContent = "Start";
 }
 
 function doCompletion() {
     var url = "autocomplete?action=fill"+
-        "&name="+escape(caseField.value)+
-        "&res="+escape(resField.value)+
-        "&compset="+escape(compsetField.value)+
-        "&mach="+escape(machField.value);
+    "&name="+escape(caseField.value)+
+    "&res="+escape(resField.value)+
+    "&compset="+escape(compsetField.value)+
+    "&mach="+escape(machField.value)+
+    "&runType="+escape(runTypeField.value);
     
     //templateField.textContent = "doCompletion: " + url + "\n\n"; // not important
+    
+    // This kind of hard-coded logic needs to be moved to java, and further to SQL
+    // it will get way too complicated at this rate.
+    if (escape(runTypeField.value) == "Branched") {
+        startdateRowField.hidden = true;
+    } else {
+        startdateRowField.hidden = false;
+        url += "&startDate="+escape(startDateField.value);
+    }
     req = initRequest();
     req.open("GET",url,true);
     req.onreadystatechange = callback;
@@ -68,6 +84,32 @@ function callback() {
             parseMessages(req.responseXML);
         }
     }
+}
+
+function addOption() {
+    var row;
+    var cell;
+    var linkElement;
+
+    if (isIE) {
+        optionsTable.style.display = 'block';
+        row = optionsTable.insertRow(optionsTable.rows.length);
+        cell = row.insertCell(0);
+    } else {
+        optionsTable.style.display = 'table';
+        row = document.createElement("tr");
+        cell = document.createElement("td");
+        row.appendChild(cell);
+        optionsTable.appendChild(row);
+    }
+/*.
+
+    linkElement = document.createElement("a");
+    linkElement.className = "popupItem";
+    linkElement.setAttribute("href", "autocomplete?action=lookup&id=" + composerId);
+    linkElement.appendChild(document.createTextNode(firstName + " " + lastName));
+    cell.appendChild(linkElement)
+    */
 }
 
 function appendComposer(firstName,lastName,composerId) {
@@ -131,8 +173,9 @@ function parseMessages(responseXML) {
         //templateField.textContent += "Parsing... \n";
         var createNewCaseScript = responseXML.getElementsByTagName("create_newcase")[0].childNodes[0].nodeValue;
         //templateField.textContent += "\n-----\n" + createNewCaseScript + "\n-----\n";
+        
         templateField.textContent = createNewCaseScript;
-        /*
+    /*
         var composers = responseXML.getElementsByTagName("composers")[0];
         if (composers.childNodes.length > 0) {
             completeTable.setAttribute("bordercolor", "black");

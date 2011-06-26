@@ -76,7 +76,9 @@ public class AutoCompleteServlet extends HttpServlet {
         String resolution = request.getParameter("res");
         String compset = request.getParameter("compset");
         String machine = request.getParameter("mach");
-         
+        
+        String runType = request.getParameter("runType");
+        String startDate = request.getParameter("startDate");
         //StringBuffer sb = new StringBuffer();
 
         // On Error
@@ -85,7 +87,7 @@ public class AutoCompleteServlet extends HttpServlet {
         if (action.equals("fill")) {
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
-            String filledTemplate = template.fillTemplate(casename, resolution, compset, machine);
+            String filledTemplate = template.fillTemplate(casename, resolution, compset, machine, runType, startDate);
             response.getWriter().write("<create_newcase>"+filledTemplate+"</create_newcase>");
         } else {
             //nothing to show
