@@ -4,7 +4,7 @@
  */
 
 
-var req;
+//var req;
 var isIE;
 
 var completeField;
@@ -31,6 +31,9 @@ function init() {
     
     doCompletion(); // So it's not empty on startup, uses whatever values in fields'
     doLoadOptions(); // Set up available options initially
+    // Async causes fun and interesting things to happen.
+    // I got it, 'req' get's overwritten because they're both done in series!
+    // Fixed issue by removing global req and passing callback w/ local req
 }
 
 function doCompletion() {
@@ -51,17 +54,17 @@ function doCompletion() {
         startdateRowField.hidden = false;
         url += "&startDate="+escape(startDateField.value);
     }*/
-    req = initRequest();
+    var req = initRequest();
     req.open("GET",url,true);
-    req.onreadystatechange = callback;
+    req.onreadystatechange = function(){callback(req)};
     req.send(null);
 }
 
 function doLoadOptions() {
     var url = "autocomplete?action=loadOptionsEnvConf";
-    req = initRequest();
+    var req = initRequest();
     req.open("GET",url,true);
-    req.onreadystatechange = callback;
+    req.onreadystatechange = function(){callback(req)};
     req.send(null);
 }
 
@@ -92,9 +95,9 @@ function doEnvConfAdd() {
     } else {
         startdateRowField.hidden = false;
     }*/
-    req = initRequest();
+    var req = initRequest();
     req.open("GET",url,true);
-    req.onreadystatechange = callback;
+    req.onreadystatechange = function(){callback(req)};
     req.send(null);
 }
 
@@ -117,9 +120,10 @@ function initRequest() {
  * 3	interactive
  * 4	complete
  */
-function callback() {
+function callback(req) {
     if (req.readyState == 4) {
         if (req.status == 200) {
+            templateField.textContent += " wup ";
             parseMessages(req.responseXML);
         }
     }
@@ -186,48 +190,6 @@ function addOption(readableName, name_id, defaultValue) {
                                     </tr> */
 }
 
-function appendComposer(firstName,lastName,composerId) {
-
-    var row;
-    var cell;
-    var linkElement;
-
-    if (isIE) {
-        completeTable.style.display = 'block';
-        row = completeTable.insertRow(completeTable.rows.length);
-        cell = row.insertCell(0);
-    } else {
-        completeTable.style.display = 'table';
-        row = document.createElement("tr");
-        cell = document.createElement("td");
-        row.appendChild(cell);
-        completeTable.appendChild(row);
-    }
-
-    cell.className = "popupCell";
-
-    linkElement = document.createElement("a");
-    linkElement.className = "popupItem";
-    linkElement.setAttribute("href", "autocomplete?action=lookup&id=" + composerId);
-    linkElement.appendChild(document.createTextNode(firstName + " " + lastName));
-    cell.appendChild(linkElement);
-}
-
-function getElementY(element){
-
-    var targetTop = 0;
-
-    if (element.offsetParent) {
-        while (element.offsetParent) {
-            targetTop += element.offsetTop;
-            element = element.offsetParent;
-        }
-    } else if (element.y) {
-        targetTop += element.y;
-    }
-    return targetTop;
-}
-
 function clearTable() {
     if (envConfigTable.getElementsByTagName("tr").length > 0) {
         envConfigTable.style.display = 'none';
@@ -267,6 +229,7 @@ function parseMessages(responseXML) {
                 addOption(readableName + ":", name, defaultValue);
             }
         }
+        templateField.textContent += "derp";
     } else {
         templateField.textContent = "--Bad Response--\n";
         return false;

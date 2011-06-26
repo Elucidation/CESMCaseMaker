@@ -114,7 +114,7 @@ public class CaseTemplate {
             names[i] = option.getName();
             values[i] = params[i]; // New values
             defaults[i] = option.getDefaultValue();
-            System.err.println("Now we're here #" + i + ": (id: " + id + ") " + params[i] + " vs default " + defaults[i]);
+            //System.err.println("Now we're here #" + i + ": (id: " + id + ") " + params[i] + " vs default " + defaults[i]);
             i++;
         }
         

@@ -92,7 +92,7 @@ public class AutoCompleteServlet extends HttpServlet {
             //System.err.println("Start here");
             template.fillTemplate(casename, resolution, compset, machine);
             response.getWriter().write("<create_newcase>" + template.get() + "</create_newcase>");
-            System.err.println("end here");
+            //System.err.println("end here");
         } else if (action.equals("fillEnvConf")) {
             // Paramters passed in
             String[] envParams = new String[envConfigOptions.size()];

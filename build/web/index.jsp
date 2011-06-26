@@ -112,6 +112,8 @@
         <h5>Special notes:</h5>
     <smallNote>
         <ul>
+            <li>Environment Configuration Option Fields are automatically generated, 
+                as are the xmlchange additions to the template, all loaded from a table (HashMap atm)</li>
             <li>Start Date is only used when the run type is a startup or 
                 hybrid, since a branched run has it's start date as the end 
                 of the branch.</li>
