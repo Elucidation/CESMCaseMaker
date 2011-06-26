@@ -85,7 +85,16 @@
 
                                         </td>
                                     </tr>
-                                    <table id="envConfig-table"/>
+                                    <tr>
+                                        <td colSpan="2">
+                                            <table id="envConfig-table"
+                                                   border="0" 
+                                                   cellpadding="0" 
+                                                   id="options-table"
+                                                   width="350px"></table>
+                                            <!--<thead><tr><td colspan="2"><strong>Environment Configuration XML Options</strong></td></tr></thead> -->
+                                        </td>
+                                    </tr>
 
                                 </tbody>
                             </table>

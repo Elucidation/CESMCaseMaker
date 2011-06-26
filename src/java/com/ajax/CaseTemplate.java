@@ -10,12 +10,17 @@ import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  *
  * @author Sam
  */
 public class CaseTemplate {
+    
+    private EnvConfigData envCfgData = new EnvConfigData();
+    private HashMap envConfigOptions = envCfgData.getEnvConfigOptions();
 
     private String templateOriginal;
     private String templateFileLocation = "template";
@@ -38,7 +43,7 @@ public class CaseTemplate {
 
         } catch (Exception ex) {
             System.err.println("Error: Couldn't read/find template file " + templateFileLocation + "\n> " + ex.getMessage());
-            templateOriginal = "Error finding/loading template file: "+ex.getMessage();
+            templateOriginal = "Error finding/loading template file: " + ex.getMessage();
         }
         templatePopulated = templateOriginal;
     }
@@ -50,8 +55,8 @@ public class CaseTemplate {
         templatePopulated = templateOriginal;
         caseRoot = "scripts/CASENAME";
     }
-    
-    public String get() { 
+
+    public String get() {
         // Important note, replaceAll fails miserably with many special characters like $
         // Also, since this return is used by XML parser wonky '<>' stuff will mess it up
         return templatePopulated.replaceAll("ENVCONF", envConf);
@@ -80,8 +85,8 @@ public class CaseTemplate {
                 templatePopulated = templatePopulated.replaceAll(fillers[i], replacements[i].trim()); // Added trim
             }
         }
-        
-        caseRoot = "scripts/"+casename;
+
+        caseRoot = "scripts/" + casename;
 
         // Have to do this or XML parser goes wonky
         //templatePopulated = templatePopulated.replaceAll("<", "").replaceAll(">", "");
@@ -89,25 +94,42 @@ public class CaseTemplate {
         return templatePopulated;
     }
 
-    public void fillEnvConf(String runType, String startDate) {
+    public void fillEnvConf(String[] params) {
+        // Order of params determined by HashMap keyset iterator, very bad
+        // But we'll be moving to SQL soon so it'll do for now.
+
         // ENV_CONF.XML Variables
         envConf = ""; // Reset
         // This is a standin for eventual SQL database
-        String[] names = {"RUN_TYPE","RUN_STARTDATE"};
-        String[] values = {runType, startDate};
-        String[] defaults = {"startup", "0001-01-01"};
         
-        for (int i=0; i<names.length; i++) {
-            if (values[i] != null && !values[i].isEmpty() && !values[i].equalsIgnoreCase(defaults[i])) {
-                envConf += caseRoot + "/" + xmlChange(caseRoot + "env_conf.xml", names[i], values[i]);
-            }
+        String[] names = new String[envConfigOptions.size()];
+        String[] values = new String[envConfigOptions.size()];
+        String[] defaults = new String[envConfigOptions.size()];
+        
+        Iterator it = envConfigOptions.keySet().iterator();
+        int i = 0;
+        while (it.hasNext()) {
+            String id = (String) it.next();
+            EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);
+            names[i] = option.getName();
+            values[i] = params[i]; // New values
+            defaults[i] = option.getDefaultValue();
+            System.err.println("Now we're here #" + i + ": (id: " + id + ") " + params[i] + " vs default " + defaults[i]);
+            i++;
         }
         
+
+        for (i = 0; i < names.length; i++) {
+            if (values[i] != null && !values[i].isEmpty() && !values[i].equalsIgnoreCase(defaults[i])) {
+                envConf += xmlChange("env_conf.xml", names[i], values[i]);
+            }
+        }
+
         // Add header comment if there are edits
         if (!envConf.isEmpty()) {
             envConf = "# Edits to file 'env_conf.xml'" + "\n" + envConf;
         }
-        
+
     }
 
     /**

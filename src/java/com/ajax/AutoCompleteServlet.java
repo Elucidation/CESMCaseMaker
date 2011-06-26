@@ -6,6 +6,8 @@ package com.ajax;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Iterator;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -23,6 +25,8 @@ public class AutoCompleteServlet extends HttpServlet {
 
     private ServletContext context;
     private CaseTemplate template = new CaseTemplate();
+    private EnvConfigData envCfgData = new EnvConfigData();
+    private HashMap envConfigOptions = envCfgData.getEnvConfigOptions();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -80,23 +84,33 @@ public class AutoCompleteServlet extends HttpServlet {
             String resolution = request.getParameter("res");
             String compset = request.getParameter("compset");
             String machine = request.getParameter("mach");
-            
+
             //  Send Response
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
             template.resetPopulatedTemplate();
+            //System.err.println("Start here");
             template.fillTemplate(casename, resolution, compset, machine);
             response.getWriter().write("<create_newcase>" + template.get() + "</create_newcase>");
+            System.err.println("end here");
         } else if (action.equals("fillEnvConf")) {
             // Paramters passed in
-            String runType = request.getParameter("runType");
-            String startDate = request.getParameter("startDate");
+            String[] envParams = new String[envConfigOptions.size()];
+            Iterator it = envConfigOptions.keySet().iterator();
+            int i = 0;
+            while (it.hasNext()) {
+                String id = (String) it.next();
+                EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);
+                envParams[i] = request.getParameter(option.getName() + "-field");
+                //System.err.println("We're here #" + i + ": (id: " + id + ") " + envParams[i]);
+                i++;
+            }
 
             // Add env_conf.xml options to template
             //  Send Response
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
-            template.fillEnvConf(runType, startDate);
+            template.fillEnvConf(envParams);
             response.getWriter().write("<create_newcase>" + template.get() + "</create_newcase>");
         } else if (action.equals("loadOptionsEnvConf")) {
             // Set up visible options table in index.jsp
@@ -104,12 +118,38 @@ public class AutoCompleteServlet extends HttpServlet {
             //  Send Response
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
-            String envConfTableXML = "bloop";
-            response.getWriter().write("<env_conf>" + envConfTableXML + "</env_conf>");
+            response.getWriter().write("<env_conf>" + getEnvConfigOptionsXML() + "</env_conf>");
         } else {
             //nothing to show
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
+    }
+
+    private String getEnvConfigOptionsXML() {
+        // Format:
+        /*<envConfigOption>
+         *  <id></id>
+         *  <name></name>
+         *  <defaultValue></defaultValue>
+         *  <readableName></readableName>
+         *  <description></description>
+         *</envConfigOption>
+         */
+        String output = "";
+        Iterator it = envConfigOptions.keySet().iterator();
+        while (it.hasNext()) {
+            String id = (String) it.next();
+            EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);
+            output += "<envConfigOption>";
+            output += "<id>" + option.getId() + "</id>";
+            output += "<name>" + option.getName() + "</name>";
+            output += "<defaultValue>" + option.getDefaultValue() + "</defaultValue>";
+            // Add check to CaseTemplate where if value has previously been added, use that instead of default
+            output += "<readableName>" + option.getReadableName() + "</readableName>";
+            output += "<description>" + option.getDescription() + "</description>";
+            output += "</envConfigOption>";
+        }
+        return output;
     }
 
     /** 

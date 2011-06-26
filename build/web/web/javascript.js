@@ -31,7 +31,6 @@ function init() {
     
     doCompletion(); // So it's not empty on startup, uses whatever values in fields'
     doLoadOptions(); // Set up available options initially
-//templateField.textContent = "Start";
 }
 
 function doCompletion() {
@@ -67,9 +66,15 @@ function doLoadOptions() {
 }
 
 function doEnvConfAdd() {
-    var url = "autocomplete?action=fillEnvConf"+
-    "&runType="+escape(runTypeField.value)+
-    "&startDate="+escape(startDateField.value);
+    var url = "autocomplete?action=fillEnvConf";
+    
+    if (envConfigTable.getElementsByTagName("tr").length > 0) {
+        for (loop = 0; loop < envConfigTable.childNodes.length; loop++) {
+            var field = envConfigTable.childNodes[loop];
+            url += "&"+ field.childNodes[1].childNodes[0].getAttribute("id")
+                +"=" + escape(field.childNodes[1].childNodes[0].value);
+        }
+    }
     
     //templateField.textContent = "doCompletion: " + url + "\n\n"; // not important
     
@@ -120,24 +125,37 @@ function callback() {
     }
 }
 
-function addOption() {
+function addOption(readableName, name_id, defaultValue) {
+    // readableName is name shown for option
+    // name_id is the id used for reference to the text input field
+    // default value is the value shown initially in the text input field
     var row;
     var cell;
-    var value = "test";
+    //var value = "test";
 
     if (isIE) {
         envConfigTable.style.display = 'block';
         row = envConfigTable.insertRow(envconfigTable.rows.length);
-        cell = row.insertCell(0);
+        namecell = row.insertCell(0);
+        valuecell = row.insertCell(1);
     } else {
         envConfigTable.style.display = 'table';
         row = document.createElement("tr");
-        cell = document.createElement("td");
-        row.appendChild(cell);
+        namecell = document.createElement("td");
+        valuecell = document.createElement("td");
+        row.appendChild(namecell);
+        row.appendChild(valuecell);
         envConfigTable.appendChild(row);
     }
-    textNode = document.createTextNode(value);
-    cell.appendChild(textNode);
+    
+    namecell.appendChild(document.createTextNode(readableName));
+    
+    formElement = document.createElement("input");
+    formElement.setAttribute("type","text");
+    formElement.setAttribute("id",name_id+"-field");
+    formElement.setAttribute("value",defaultValue);
+    formElement.setAttribute("onkeyup","doEnvConfAdd();");
+    valuecell.appendChild(formElement);
         
             
             
@@ -211,10 +229,10 @@ function getElementY(element){
 }
 
 function clearTable() {
-    if (completeTable.getElementsByTagName("tr").length > 0) {
-        completeTable.style.display = 'none';
-        for (loop = completeTable.childNodes.length -1; loop >= 0 ; loop--) {
-            completeTable.removeChild(completeTable.childNodes[loop]);
+    if (envConfigTable.getElementsByTagName("tr").length > 0) {
+        envConfigTable.style.display = 'none';
+        for (loop = envConfigTable.childNodes.length - 1; loop >= 0 ; loop--) {
+            envConfigTable.removeChild(envConfigTable.childNodes[loop]);
         }
     }
 }
@@ -226,9 +244,29 @@ function parseMessages(responseXML) {
     } else if (responseXML.getElementsByTagName("create_newcase").length != 0){
         templateField.textContent = responseXML.getElementsByTagName("create_newcase")[0].childNodes[0].nodeValue;
     } else if (responseXML.getElementsByTagName("env_conf").length != 0){
-        templateField.textContent = responseXML.getElementsByTagName("env_conf")[0].childNodes[0].nodeValue;
-        addOption();
-        
+        var optionsEC = responseXML.getElementsByTagName("env_conf")[0]; // Environment Config Options
+        clearTable(); // Start fresh
+        if (optionsEC.childNodes.length > 0) {
+            for (loop = 0; loop < optionsEC.childNodes.length; loop++) {
+                var option = optionsEC.childNodes[loop];
+                // Format:
+                /*<envConfigOption>
+                 *  <id></id>
+                 *  <name></name>
+                 *  <defaultValue></defaultValue>
+                 *  <readableName></readableName>
+                 *  <description></description>
+                 *</envConfigOption>
+                 */
+                //var id = option.getElementsByTagName("id")[0].childNodes[0].nodeValue;
+                var name = option.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+                var defaultValue = option.getElementsByTagName("defaultValue")[0].childNodes[0].nodeValue;
+                var readableName = option.getElementsByTagName("readableName")[0].childNodes[0].nodeValue;
+                //var description = option.getElementsByTagName("description")[0].childNodes[0].nodeValue;
+                
+                addOption(readableName + ":", name, defaultValue);
+            }
+        }
     } else {
         templateField.textContent = "--Bad Response--\n";
         return false;

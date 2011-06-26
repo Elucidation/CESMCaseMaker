@@ -9,17 +9,19 @@
 echo "Creating new case..."
 scripts/create_newcase -case CASENAME -res RESOLUTION -compset COMPSET -mach MACHINE
 
+cd CASEROOT
+
 ENVCONF
 echo "Configuring case..."
-CASEROOT/configure -cleanall
-CASEROOT/configure -case
+configure -cleanall
+configure -case
 
 
 echo "Building case..."
-CASEROOT/CASENAME.MACHINE.clean_build
-CASEROOT/CASENAME.MACHINE.build
+CASENAME.MACHINE.clean_build
+CASENAME.MACHINE.build
 
 echo "Running simulation..."
-CASEROOT/CASENAME.MACHINE.run
+CASENAME.MACHINE.run
 
 echo "Run complete."
