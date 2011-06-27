@@ -212,6 +212,7 @@ public class AutoCompleteServlet extends HttpServlet {
         // This hardcoding needs to be moved to either SQL table merges of some sort (for deduction only)
         // Or for a more powerful comparison, OWL ontology inference engine.
 
+        /*
         // RUN_STARTDATE only allowed if RUN_TYPE == Startup|Hybrid
         if (option.getName().equalsIgnoreCase("RUN_STARTDATE")
                 && template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase("Branched")) {
@@ -219,7 +220,8 @@ public class AutoCompleteServlet extends HttpServlet {
         } else {
             //System.err.println(option.getName());
             return true;
-        }
+        }*/
+        return true;
 
     }
 }
