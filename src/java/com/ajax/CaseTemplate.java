@@ -18,13 +18,12 @@ import java.util.Iterator;
  * @author Sam
  */
 public class CaseTemplate {
-    
+
     private EnvConfigData envCfgData = new EnvConfigData();
     private HashMap envConfigOptions = envCfgData.getEnvConfigOptions();
-    
     // Contains non-default environment config options added
     private HashMap<String, String> envConfigs = new HashMap<String, String>();
-
+    private HashMap<String, String> defaults = new HashMap<String, String>(); // This is like burning paper cash to run a coal plant for money...
     private String templateOriginal;
     private String templateFileLocation = "template";
     private String templatePopulated; // This is what is changed and returned
@@ -49,6 +48,16 @@ public class CaseTemplate {
             templateOriginal = "Error finding/loading template file: " + ex.getMessage();
         }
         templatePopulated = templateOriginal;
+        
+        // Set up defaults hash from original hash, remove this hack ASAP
+        // this makes a hash linking name(_id) to default values
+        Iterator it = envConfigOptions.keySet().iterator();
+        while (it.hasNext()) {
+            String id = (String) it.next();
+            EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);
+            defaults.put(option.getName(), option.getDefaultValue());
+        }
+                
     }
 
     /**
@@ -58,21 +67,21 @@ public class CaseTemplate {
         templatePopulated = templateOriginal;
         caseRoot = "scripts/CASENAME";
     }
-    
+
     public void resetEnvConfOptions() {
-        envConf = ""; 
+        envConf = "";
         envConfigs = new HashMap<String, String>();
         // Kept separate in case we more env XML files and want to keep options throughout
     }
-    
+
     public String getEnvConfigValue(String name_id) {
         // Returns value of environment configuration option if it was added to template
-        if (!envConfigs.containsKey(name_id)){
+        if (!envConfigs.containsKey(name_id)) {
             return "";
         }
         return envConfigs.get(name_id);
     }
-    
+
     public void removeEnvConfigValue(String name_id) {
         // Returns value of environment configuration option if it was added to template
         envConfigs.remove(name_id);
@@ -116,6 +125,45 @@ public class CaseTemplate {
         return templatePopulated;
     }
 
+    public void updateEnvConfString() {
+        envConf = "";
+        /*
+        String[] names = new String[envConfigOptions.size()];
+        String[] values = new String[envConfigOptions.size()];
+        String[] defaults = new String[envConfigOptions.size()];
+        Iterator it = envConfigOptions.keySet().iterator();
+        int i = 0;
+        while (it.hasNext()) {
+        String id = (String) it.next();
+        EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);
+        names[i] = option.getName();
+        values[i] = getEnvConfigValue(names[i]); // New values
+        defaults[i] = option.getDefaultValue();
+        i++;
+        }
+        for (i = 0; i < envConfigs.size(); i++) {
+        if (!values[i].equalsIgnoreCase(defaults[i])) {
+        envConf += xmlChange("env_conf.xml", names[i], values[i]);
+        }
+        }*/
+        
+        Iterator it = envConfigs.keySet().iterator();
+        while (it.hasNext()) {
+            String name = (String) it.next();
+            String val = (String) envConfigs.get(name);
+//            System.err.println(names[i] + " | Saved: "+envConfigs.get(names[i])
+//                    + " | Table: "+defaults.get(names[i]));
+            if ( !envConfigs.get(name).equalsIgnoreCase(defaults.get(name)) ) {
+                envConf += xmlChange("env_conf.xml", name, val);;
+            }
+        }
+
+        // Add header comment if there are edits
+        if (!envConf.isEmpty()) {
+            envConf = "# Edits to file 'env_conf.xml'" + "\n" + envConf;
+        }
+    }
+
     public void fillEnvConf(String[] params) {
         // Order of params determined by HashMap keyset iterator, very bad
         // But we'll be moving to SQL soon so it'll do for now.
@@ -123,11 +171,11 @@ public class CaseTemplate {
         // ENV_CONF.XML Variables
         envConf = ""; // Reset
         // This is a standin for eventual SQL database
-        
+
         String[] names = new String[envConfigOptions.size()];
         String[] values = new String[envConfigOptions.size()];
         String[] defaults = new String[envConfigOptions.size()];
-        
+
         Iterator it = envConfigOptions.keySet().iterator();
         int i = 0;
         while (it.hasNext()) {
@@ -139,16 +187,16 @@ public class CaseTemplate {
             //System.err.println("Now we're here #" + i + ": (id: " + id + ") " + params[i] + " vs default " + defaults[i]);
             i++;
         }
-        
+
         //System.err.println("---");
         for (i = 0; i < names.length; i++) {
             /*// If value was given & isn't default
             if (values[i] != null && !values[i].isEmpty() && !values[i].equalsIgnoreCase(defaults[i])) {
-                envConf += xmlChange("env_conf.xml", names[i], values[i]);
+            envConf += xmlChange("env_conf.xml", names[i], values[i]);
             }*/
             if (values[i] != null && !values[i].isEmpty()) {
                 // HashMap of envConf option changes filled here only if not existing or different value
-                if (envConfigs.get(names[i]) == null ) {
+                if (envConfigs.get(names[i]) == null) {
                     envConfigs.put(names[i], values[i]);
                 } else if (!envConfigs.get(names[i]).equals(values[i])) {
                     envConfigs.remove(names[i]); // keeps single value in hashmap hopefully
@@ -156,17 +204,12 @@ public class CaseTemplate {
                 }
             }
         }
-        for (i = 0; i < envConfigs.size(); i++) {
-            if (!envConfigs.get(names[i]).equalsIgnoreCase(defaults[i])) {
-                envConf += xmlChange("env_conf.xml", names[i], envConfigs.get(names[i]));
-            }
-        }
+
+        updateEnvConfString();
+
         //System.err.println("---");
 
-        // Add header comment if there are edits
-        if (!envConf.isEmpty()) {
-            envConf = "# Edits to file 'env_conf.xml'" + "\n" + envConf;
-        }
+
 
     }
 

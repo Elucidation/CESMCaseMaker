@@ -187,6 +187,7 @@ public class AutoCompleteServlet extends HttpServlet {
                 template.removeEnvConfigValue(option.getName());
             }
         }
+        template.updateEnvConfString();
         return output;
     }
 
@@ -223,12 +224,13 @@ public class AutoCompleteServlet extends HttpServlet {
                 && template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase("Branched")) {
             return false;
         } 
+        /* // Trouble if I add this atm, it works, but errors pile up
         // RUN_REFDATE ignored for RUN_TYPE == Startup (default)
         if (option.getName().equalsIgnoreCase("RUN_REFDATE")
                 && (template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase("startup")
                 || template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase(""))) {
             return false;
-        }
+        }*/
         return true;
     }
 }
