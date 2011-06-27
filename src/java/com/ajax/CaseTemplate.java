@@ -151,8 +151,8 @@ public class CaseTemplate {
         while (it.hasNext()) {
             String name = (String) it.next();
             String val = (String) envConfigs.get(name);
-            System.err.println(name + " | Saved: "+envConfigs.get(name)
-                    + " | Table: "+defaults.get(name));
+//            System.err.println(name + " | Saved: "+envConfigs.get(name)
+//                    + " | Table: "+defaults.get(name));
             if ( !envConfigs.get(name).equalsIgnoreCase(defaults.get(name)) && !envConfigs.get(name).trim().isEmpty() ) {
                 envConf += xmlChange("env_conf.xml", name, val);;
             }
