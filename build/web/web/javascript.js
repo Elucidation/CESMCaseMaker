@@ -139,10 +139,11 @@ function callback(req) {
     }
 }
 
-function addOption(readableName, name_id, defaultValue, description) {
+function addOption(readableName, name_id, value, defaultValue, description) {
     // readableName is name shown for option
     // name_id is the id used for reference to the text input field
-    // default value is the value shown initially in the text input field
+    // value is the value shown initially in the text input field
+    // default value is the value shown when mouse hovers over the readable Name
     // description is put in title, showing up when mouse hovers over field
     var row;
     var cell;
@@ -171,7 +172,7 @@ function addOption(readableName, name_id, defaultValue, description) {
     var formElement = document.createElement("input");
     formElement.setAttribute("type","text");
     formElement.setAttribute("id",name_id+"-field");
-    formElement.setAttribute("value",defaultValue);
+    formElement.setAttribute("value",value);
     formElement.setAttribute("onkeyup","doEnvConfAdd();");
     formElement.setAttribute("title",description);
     valuecell.appendChild(formElement);
@@ -252,6 +253,7 @@ function addOptionFields(optionsEC) {
             /*<envConfigOption>
                  *  <id></id>
                  *  <name></name>
+                 *  <value></value>
                  *  <defaultValue></defaultValue>
                  *  <readableName></readableName>
                  *  <description></description>
@@ -259,11 +261,12 @@ function addOptionFields(optionsEC) {
                  */
             //var id = option.getElementsByTagName("id")[0].childNodes[0].nodeValue;
             var name = option.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+            var value = option.getElementsByTagName("value")[0].childNodes[0].nodeValue;
             var defaultValue = option.getElementsByTagName("defaultValue")[0].childNodes[0].nodeValue;
             var readableName = option.getElementsByTagName("readableName")[0].childNodes[0].nodeValue;
             var description = option.getElementsByTagName("description")[0].childNodes[0].nodeValue;
                 
-            addOption(readableName + ":", name, defaultValue, description);
+            addOption(readableName + ":", name, value, defaultValue, description);
         }
     }
 }

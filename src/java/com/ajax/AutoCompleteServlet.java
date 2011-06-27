@@ -140,13 +140,14 @@ public class AutoCompleteServlet extends HttpServlet {
         }
 
         // Put this separate for now
+        /*
         if (action.equals("fillEnvConf")) {
             Iterator it = envConfigOptions.keySet().iterator();
             while (it.hasNext()) {
                 String id = (String) it.next();
                 EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);
             }
-        }
+        }*/
     }
 
     private String getEnvConfigOptionsXML() {
@@ -154,6 +155,7 @@ public class AutoCompleteServlet extends HttpServlet {
         /*<envConfigOption>
          *  <id></id>
          *  <name></name>
+         *  <value></value>
          *  <defaultValue></defaultValue>
          *  <readableName></readableName>
          *  <description></description>
@@ -165,21 +167,24 @@ public class AutoCompleteServlet extends HttpServlet {
             String id = (String) it.next();
             EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);
             if (doCheck(option)) {
-                    // This option should be disabled due to values in other parts of the config
-                    //String param = option.getName() + "-field");
+                // This option should be disabled due to values in other parts of the config
+                //String param = option.getName() + "-field");
                 output += "<envConfigOption>";
                 output += "<id>" + option.getId() + "</id>";
                 output += "<name>" + option.getName() + "</name>";
                 if (!template.getEnvConfigValue(option.getName()).isEmpty()) {
-                    //System.err.println("Well, it should work: " + template.getEnvConfigValue(option.getName()));
-                    output += "<defaultValue>" + template.getEnvConfigValue(option.getName()) + "</defaultValue>";
+                    output += "<value>" + template.getEnvConfigValue(option.getName()) + "</value>";
                 } else {
-                    output += "<defaultValue>" + option.getDefaultValue() + "</defaultValue>";
+                    output += "<value>" + option.getDefaultValue() + "</value>";
                 }
+                output += "<defaultValue>" + option.getDefaultValue() + "</defaultValue>";
                 // Add check to CaseTemplate where if value has previously been added, use that instead of default
                 output += "<readableName>" + option.getReadableName() + "</readableName>";
                 output += "<description>" + option.getDescription() + "</description>";
                 output += "</envConfigOption>";
+            } else {
+                // Remove from template
+                template.removeEnvConfigValue(option.getName());
             }
         }
         return output;
@@ -213,13 +218,17 @@ public class AutoCompleteServlet extends HttpServlet {
         // Or for a more powerful comparison, OWL ontology inference engine.
 
         // RUN_STARTDATE only allowed if RUN_TYPE == Startup|Hybrid
+        //System.err.println(":: "+option.getName() + " vs " + template.getEnvConfigValue("RUN_TYPE"));
         if (option.getName().equalsIgnoreCase("RUN_STARTDATE")
                 && template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase("Branched")) {
             return false;
-        } else {
-            //System.err.println(option.getName());
-            return true;
+        } 
+        // RUN_REFDATE ignored for RUN_TYPE == Startup (default)
+        if (option.getName().equalsIgnoreCase("RUN_REFDATE")
+                && (template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase("startup")
+                || template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase(""))) {
+            return false;
         }
-
+        return true;
     }
 }

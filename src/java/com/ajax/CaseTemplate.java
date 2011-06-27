@@ -72,6 +72,11 @@ public class CaseTemplate {
         }
         return envConfigs.get(name_id);
     }
+    
+    public void removeEnvConfigValue(String name_id) {
+        // Returns value of environment configuration option if it was added to template
+        envConfigs.remove(name_id);
+    }
 
     public String get() {
         // Important note, replaceAll fails miserably with many special characters like $
@@ -135,14 +140,28 @@ public class CaseTemplate {
             i++;
         }
         
-
+        //System.err.println("---");
         for (i = 0; i < names.length; i++) {
+            /*// If value was given & isn't default
             if (values[i] != null && !values[i].isEmpty() && !values[i].equalsIgnoreCase(defaults[i])) {
                 envConf += xmlChange("env_conf.xml", names[i], values[i]);
-                envConfigs.remove(names[i]); // keeps single value in hashmap hopefully
-                envConfigs.put(names[i], values[i]);
+            }*/
+            if (values[i] != null && !values[i].isEmpty()) {
+                // HashMap of envConf option changes filled here only if not existing or different value
+                if (envConfigs.get(names[i]) == null ) {
+                    envConfigs.put(names[i], values[i]);
+                } else if (!envConfigs.get(names[i]).equals(values[i])) {
+                    envConfigs.remove(names[i]); // keeps single value in hashmap hopefully
+                    envConfigs.put(names[i], values[i]);
+                }
             }
         }
+        for (i = 0; i < envConfigs.size(); i++) {
+            if (!envConfigs.get(names[i]).equalsIgnoreCase(defaults[i])) {
+                envConf += xmlChange("env_conf.xml", names[i], envConfigs.get(names[i]));
+            }
+        }
+        //System.err.println("---");
 
         // Add header comment if there are edits
         if (!envConf.isEmpty()) {
