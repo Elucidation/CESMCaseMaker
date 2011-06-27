@@ -151,9 +151,9 @@ public class CaseTemplate {
         while (it.hasNext()) {
             String name = (String) it.next();
             String val = (String) envConfigs.get(name);
-//            System.err.println(names[i] + " | Saved: "+envConfigs.get(names[i])
-//                    + " | Table: "+defaults.get(names[i]));
-            if ( !envConfigs.get(name).equalsIgnoreCase(defaults.get(name)) ) {
+            System.err.println(name + " | Saved: "+envConfigs.get(name)
+                    + " | Table: "+defaults.get(name));
+            if ( !envConfigs.get(name).equalsIgnoreCase(defaults.get(name)) && !envConfigs.get(name).trim().isEmpty() ) {
                 envConf += xmlChange("env_conf.xml", name, val);;
             }
         }
@@ -194,7 +194,7 @@ public class CaseTemplate {
             if (values[i] != null && !values[i].isEmpty() && !values[i].equalsIgnoreCase(defaults[i])) {
             envConf += xmlChange("env_conf.xml", names[i], values[i]);
             }*/
-            if (values[i] != null && !values[i].isEmpty()) {
+            if (values[i] != null) {
                 // HashMap of envConf option changes filled here only if not existing or different value
                 if (envConfigs.get(names[i]) == null) {
                     envConfigs.put(names[i], values[i]);

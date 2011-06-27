@@ -91,9 +91,10 @@ public class AutoCompleteServlet extends HttpServlet {
             template.resetPopulatedTemplate();
             //System.err.println("Start here");
             template.fillTemplate(casename, resolution, compset, machine);
+            String envStuff = getEnvConfigOptionsXML(); // This affects template, so template.get must come after!
             String wrapper = "<wrap>"
                     + "<create_newcase>" + template.get() + "</create_newcase>"
-                    + "<env_conf>" + getEnvConfigOptionsXML() + "</env_conf>"
+                    + "<env_conf>" + envStuff + "</env_conf>"
                     + "</wrap>";
             response.getWriter().write(wrapper);
             //System.err.println("end here");
@@ -115,10 +116,11 @@ public class AutoCompleteServlet extends HttpServlet {
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
             template.fillEnvConf(envParams);
+            String envStuff = getEnvConfigOptionsXML(); // This affects template, so template.get must come after!
             //response.getWriter().write("<create_newcase>" + template.get() + "</create_newcase>");
             String wrapper = "<wrap>"
                     + "<create_newcase>" + template.get() + "</create_newcase>"
-                    + "<env_conf>" + getEnvConfigOptionsXML() + "</env_conf>"
+                    + "<env_conf>" + envStuff + "</env_conf>"
                     + "</wrap>";
             response.getWriter().write(wrapper);
         } else if (action.equals("loadOptionsEnvConf")) {
@@ -128,12 +130,17 @@ public class AutoCompleteServlet extends HttpServlet {
             String level = request.getParameter("level");
             if (level != null && level.equalsIgnoreCase("full")) { // Reset template fully
                 template.resetEnvConfOptions();
-                template.resetPopulatedTemplate();
+                //template.resetPopulatedTemplate(); // Need envParams to fix this
 
             }
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
-            response.getWriter().write("<env_conf>" + getEnvConfigOptionsXML() + "</env_conf>");
+            String envStuff = getEnvConfigOptionsXML(); // This affects template, so template.get must come after!
+            String wrapper = "<wrap>"
+                    + "<create_newcase>" + template.get() + "</create_newcase>"
+                    + "<env_conf>" + envStuff + "</env_conf>"
+                    + "</wrap>";
+            response.getWriter().write(wrapper);
         } else {
             //nothing to show
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -183,7 +190,7 @@ public class AutoCompleteServlet extends HttpServlet {
                 output += "<description>" + option.getDescription() + "</description>";
                 output += "</envConfigOption>";
             } else {
-                // Remove from template
+                // Remove from template, maybe keep for later use, nope.
                 template.removeEnvConfigValue(option.getName());
             }
         }
@@ -224,13 +231,14 @@ public class AutoCompleteServlet extends HttpServlet {
                 && template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase("Branched")) {
             return false;
         } 
-        /* // Trouble if I add this atm, it works, but errors pile up
-        // RUN_REFDATE ignored for RUN_TYPE == Startup (default)
-        if (option.getName().equalsIgnoreCase("RUN_REFDATE")
+        // RUN_REFDATE&RUN_REFCASE ignored for RUN_TYPE == Startup (default)
+        if ((option.getName().equalsIgnoreCase("RUN_REFDATE") || option.getName().equalsIgnoreCase("RUN_REFCASE"))
                 && (template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase("startup")
                 || template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase(""))) {
             return false;
-        }*/
+        }
+        // RUN_REFCASE ignored for RUN_TYPE == Startup (default)
+        
         return true;
     }
 }
