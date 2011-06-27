@@ -131,7 +131,7 @@
                     <li><i>Hybrid</i> : Any can be used</li>
                 </ul>
                 These constraints can be described in either direction, and 
-                currently resides in a separate doCheck() function that does a 
+                currently resides in a <a href="https://github.com/Elucidation/CESMCaseMaker/blob/6bd201b51d51a1d238c178b6423e43703ed5dfd1/src/java/com/ajax/AutoCompleteServlet.java#L223">separate doCheck() function</a> that does a 
                 boolean check to see if constraint is satisfied, this will make
                 it easier to connect an inference engine to the system.
             </li>
