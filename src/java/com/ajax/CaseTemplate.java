@@ -55,6 +55,11 @@ public class CaseTemplate {
         templatePopulated = templateOriginal;
         caseRoot = "scripts/CASENAME";
     }
+    
+    public void resetEnvConfOptions() {
+        envConf = ""; 
+        // Kept separate in case we more env XML files and want to keep options throughout
+    }
 
     public String get() {
         // Important note, replaceAll fails miserably with many special characters like $

@@ -116,6 +116,12 @@ public class AutoCompleteServlet extends HttpServlet {
             // Set up visible options table in index.jsp
             //System.err.println("Got called by loadOptionsEnvConf.");
             //  Send Response
+            String level = request.getParameter("level");
+            if (level!=null && level.equalsIgnoreCase("full")) { // Reset template fully
+                template.resetEnvConfOptions();
+                template.resetPopulatedTemplate();
+                
+            }
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
             response.getWriter().write("<env_conf>" + getEnvConfigOptionsXML() + "</env_conf>");

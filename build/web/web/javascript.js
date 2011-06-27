@@ -30,7 +30,7 @@ function init() {
     templateField.textContent = "";
     
     doCompletion(); // So it's not empty on startup, uses whatever values in fields'
-    doLoadOptions(); // Set up available options initially
+    doLoadOptions("full"); // Set up available options initially, clear everything
     // Async causes fun and interesting things to happen.
     // I got it, 'req' get's overwritten because they're both done in series!
     // Fixed issue by removing global req and passing callback w/ local req
@@ -60,8 +60,12 @@ function doCompletion() {
     req.send(null);
 }
 
-function doLoadOptions() {
-    var url = "autocomplete?action=loadOptionsEnvConf";
+function doLoadOptions(level) {
+    // level can be 'full' or null
+    var url = "autocomplete?action=loadOptionsEnvConf&level=";
+    if (level) {
+        url += level;
+    }
     var req = initRequest();
     req.open("GET",url,true);
     req.onreadystatechange = function(){callback(req)};
@@ -129,10 +133,11 @@ function callback(req) {
     }
 }
 
-function addOption(readableName, name_id, defaultValue) {
+function addOption(readableName, name_id, defaultValue, description) {
     // readableName is name shown for option
     // name_id is the id used for reference to the text input field
     // default value is the value shown initially in the text input field
+    // description is put in title, showing up when mouse hovers over field
     var row;
     var cell;
     //var value = "test";
@@ -151,14 +156,15 @@ function addOption(readableName, name_id, defaultValue) {
         row.appendChild(valuecell);
         envConfigTable.appendChild(row);
     }
+    var nameElement = document.createTextNode(readableName);
+    namecell.appendChild(nameElement);
     
-    namecell.appendChild(document.createTextNode(readableName));
-    
-    formElement = document.createElement("input");
+    var formElement = document.createElement("input");
     formElement.setAttribute("type","text");
     formElement.setAttribute("id",name_id+"-field");
     formElement.setAttribute("value",defaultValue);
     formElement.setAttribute("onkeyup","doEnvConfAdd();");
+    formElement.setAttribute("title",description);
     valuecell.appendChild(formElement);
         
             
@@ -224,9 +230,9 @@ function parseMessages(responseXML) {
                 var name = option.getElementsByTagName("name")[0].childNodes[0].nodeValue;
                 var defaultValue = option.getElementsByTagName("defaultValue")[0].childNodes[0].nodeValue;
                 var readableName = option.getElementsByTagName("readableName")[0].childNodes[0].nodeValue;
-                //var description = option.getElementsByTagName("description")[0].childNodes[0].nodeValue;
+                var description = option.getElementsByTagName("description")[0].childNodes[0].nodeValue;
                 
-                addOption(readableName + ":", name, defaultValue);
+                addOption(readableName + ":", name, defaultValue, description);
             }
         }
         templateField.textContent += "derp";

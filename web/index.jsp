@@ -46,7 +46,8 @@
                                                    size="20"
                                                    id="case-field"
                                                    value="example"
-                                                   onkeyup="doCompletion();"/>
+                                                   onkeyup="doCompletion();"
+                                                   title="Chosen by User, used to name case directory as /scripts/CASENAME folder of CESM"/>
 
                                         </td>
                                     </tr>
@@ -59,7 +60,8 @@
                                                    size="20"
                                                    value="f19_g16"
                                                    id="res-field"
-                                                   onkeyup="doCompletion();"/>
+                                                   onkeyup="doCompletion();"
+                                                   title="Shortname for supported Resolutions, A Resolution is a combination of 4 grids, Atmosphere, Land, Ice & Ocean"/>
 
                                         </td>
                                     </tr>
@@ -70,7 +72,8 @@
                                                    size="20"
                                                    value="B2000_CN"
                                                    id="compset-field"
-                                                   onkeyup="doCompletion();"/>
+                                                   onkeyup="doCompletion();"
+                                                   title="Shortname for supported Component Sets, A Component Set consists of 5 partial models, Atmosphere, Land, Ocean, Land-Ice & Sea-Ice"/>
 
                                         </td>
                                     </tr>
@@ -81,7 +84,8 @@
                                                    size="20"
                                                    value="bluefire"
                                                    id="machine-field"
-                                                   onkeyup="doCompletion();"/>
+                                                   onkeyup="doCompletion();"
+                                                   title="Name for supported Machines, A Machine describes the hardware protocols used to run CESM (# processors, directory information etc.)"/>
 
                                         </td>
                                     </tr>
