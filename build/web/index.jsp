@@ -19,7 +19,7 @@
         <p>CESM stands for the <a href="http://www.cesm.ucar.edu/">Community Earth System Model</a>
             which is a global climate model used by the <a href="http://ncar.ucar.edu/">National Center for Atmospheric Research</a> for running simulations of the earth's climate.</p>
 
-        <p>As you fill out the options below the template will auto-update on the side.</p>
+        <p>Defaults provided, As you fill out the options below the template will auto-update on the side.</p>
         <h6>You can copy/download the script to run from your CESM home directory.</h6>
 
         <form name="autofillform" > <!--action="autocomplete" removed this since no action -->
@@ -87,6 +87,11 @@
                                                    onkeyup="doCompletion();"
                                                    title="Name for supported Machines, A Machine describes the hardware protocols used to run CESM (# processors, directory information etc.)"/>
 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="2">
+                                            <strong><a href="http://www.cesm.ucar.edu/models/cesm1.0/cesm/cesm_doc/a4288.html">Environment Config XML Options</a></strong>
                                         </td>
                                     </tr>
                                     <tr>

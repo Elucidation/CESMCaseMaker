@@ -31,9 +31,9 @@ function init() {
     
     doCompletion(); // So it's not empty on startup, uses whatever values in fields'
     doLoadOptions("full"); // Set up available options initially, clear everything
-    // Async causes fun and interesting things to happen.
-    // I got it, 'req' get's overwritten because they're both done in series!
-    // Fixed issue by removing global req and passing callback w/ local req
+// Async causes fun and interesting things to happen.
+// I got it, 'req' get's overwritten because they're both done in series!
+// Fixed issue by removing global req and passing callback w/ local req
 }
 
 function doCompletion() {
@@ -56,7 +56,9 @@ function doCompletion() {
     }*/
     var req = initRequest();
     req.open("GET",url,true);
-    req.onreadystatechange = function(){callback(req)};
+    req.onreadystatechange = function(){
+        callback(req)
+    };
     req.send(null);
 }
 
@@ -68,7 +70,9 @@ function doLoadOptions(level) {
     }
     var req = initRequest();
     req.open("GET",url,true);
-    req.onreadystatechange = function(){callback(req)};
+    req.onreadystatechange = function(){
+        callback(req)
+    };
     req.send(null);
 }
 
@@ -79,7 +83,7 @@ function doEnvConfAdd() {
         for (loop = 0; loop < envConfigTable.childNodes.length; loop++) {
             var field = envConfigTable.childNodes[loop];
             url += "&"+ field.childNodes[1].childNodes[0].getAttribute("id")
-                +"=" + escape(field.childNodes[1].childNodes[0].value);
+            +"=" + escape(field.childNodes[1].childNodes[0].value);
         }
     }
     
@@ -101,7 +105,9 @@ function doEnvConfAdd() {
     }*/
     var req = initRequest();
     req.open("GET",url,true);
-    req.onreadystatechange = function(){callback(req)};
+    req.onreadystatechange = function(){
+        callback(req)
+    };
     req.send(null);
 }
 
@@ -127,7 +133,7 @@ function initRequest() {
 function callback(req) {
     if (req.readyState == 4) {
         if (req.status == 200) {
-            templateField.textContent += " wup ";
+            //templateField.textContent += " wup ";
             parseMessages(req.responseXML);
         }
     }
@@ -156,7 +162,10 @@ function addOption(readableName, name_id, defaultValue, description) {
         row.appendChild(valuecell);
         envConfigTable.appendChild(row);
     }
-    var nameElement = document.createTextNode(readableName);
+    //var nameElement = document.createTextNode(readableName);
+    var nameElement = document.createElement("normalText");
+    nameElement.setAttribute("title", "xml option: "+ name_id +", default: "+defaultValue);
+    nameElement.textContent = readableName;
     namecell.appendChild(nameElement);
     
     var formElement = document.createElement("input");
@@ -209,16 +218,38 @@ function parseMessages(responseXML) {
     if (responseXML == null) {
         templateField.textContent += "--Null Response--\n";
         return false;
+    } else if (responseXML.getElementsByTagName("wrap").length != 0) {
+        // wrapper containing both create_newcase & env_conf, so do both
+        updateTemplateField(responseXML.getElementsByTagName("create_newcase")[0]);
+        
+        // Only if there are changes (# of fields)
+        // Not a very accurate check, if two changes cancel each other no change will show up!
+        if (envConfigTable.getElementsByTagName("tr").length != responseXML.getElementsByTagName("env_conf")[0].childNodes.length) {
+            addOptionFields(responseXML.getElementsByTagName("env_conf")[0]);
+        }
+        //templateField.textContent = "Hmmmmmm....\n";
     } else if (responseXML.getElementsByTagName("create_newcase").length != 0){
-        templateField.textContent = responseXML.getElementsByTagName("create_newcase")[0].childNodes[0].nodeValue;
+        updateTemplateField(responseXML.getElementsByTagName("create_newcase")[0]);
     } else if (responseXML.getElementsByTagName("env_conf").length != 0){
-        var optionsEC = responseXML.getElementsByTagName("env_conf")[0]; // Environment Config Options
-        clearTable(); // Start fresh
-        if (optionsEC.childNodes.length > 0) {
-            for (loop = 0; loop < optionsEC.childNodes.length; loop++) {
-                var option = optionsEC.childNodes[loop];
-                // Format:
-                /*<envConfigOption>
+        addOptionFields(responseXML.getElementsByTagName("env_conf")[0]);
+    //templateField.textContent += "derp";
+    } else {
+        templateField.textContent = "--Bad Response--\n";
+        return false;
+    }
+    
+}
+function updateTemplateField(caseElement) {
+    templateField.textContent = caseElement.childNodes[0].nodeValue;
+}
+function addOptionFields(optionsEC) {
+    //var optionsEC = ; // Environment Config Options
+    clearTable(); // Start fresh
+    if (optionsEC.childNodes.length > 0) {
+        for (loop = 0; loop < optionsEC.childNodes.length; loop++) {
+            var option = optionsEC.childNodes[loop];
+            // Format:
+            /*<envConfigOption>
                  *  <id></id>
                  *  <name></name>
                  *  <defaultValue></defaultValue>
@@ -226,37 +257,13 @@ function parseMessages(responseXML) {
                  *  <description></description>
                  *</envConfigOption>
                  */
-                //var id = option.getElementsByTagName("id")[0].childNodes[0].nodeValue;
-                var name = option.getElementsByTagName("name")[0].childNodes[0].nodeValue;
-                var defaultValue = option.getElementsByTagName("defaultValue")[0].childNodes[0].nodeValue;
-                var readableName = option.getElementsByTagName("readableName")[0].childNodes[0].nodeValue;
-                var description = option.getElementsByTagName("description")[0].childNodes[0].nodeValue;
+            //var id = option.getElementsByTagName("id")[0].childNodes[0].nodeValue;
+            var name = option.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+            var defaultValue = option.getElementsByTagName("defaultValue")[0].childNodes[0].nodeValue;
+            var readableName = option.getElementsByTagName("readableName")[0].childNodes[0].nodeValue;
+            var description = option.getElementsByTagName("description")[0].childNodes[0].nodeValue;
                 
-                addOption(readableName + ":", name, defaultValue, description);
-            }
+            addOption(readableName + ":", name, defaultValue, description);
         }
-        templateField.textContent += "derp";
-    } else {
-        templateField.textContent = "--Bad Response--\n";
-        return false;
     }
-    
 }
-
-/*
-        var composers = responseXML.getElementsByTagName("composers")[0];
-        if (composers.childNodes.length > 0) {
-            completeTable.setAttribute("bordercolor", "black");
-            completeTable.setAttribute("border", "1");
-            templateField.textContent += composers.childNodes.length +" Composers...\n";
-
-            for (loop = 0; loop < composers.childNodes.length; loop++) {
-                var composer = composers.childNodes[loop];
-                var firstName = composer.getElementsByTagName("firstName")[0];
-                var lastName = composer.getElementsByTagName("lastName")[0];
-                var composerId = composer.getElementsByTagName("id")[0];
-                appendComposer(firstName.childNodes[0].nodeValue,
-                    lastName.childNodes[0].nodeValue,
-                    composerId.childNodes[0].nodeValue);
-            }
-        }*/

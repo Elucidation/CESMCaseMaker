@@ -21,6 +21,9 @@ public class CaseTemplate {
     
     private EnvConfigData envCfgData = new EnvConfigData();
     private HashMap envConfigOptions = envCfgData.getEnvConfigOptions();
+    
+    // Contains non-default environment config options added
+    private HashMap<String, String> envConfigs = new HashMap<String, String>();
 
     private String templateOriginal;
     private String templateFileLocation = "template";
@@ -58,7 +61,16 @@ public class CaseTemplate {
     
     public void resetEnvConfOptions() {
         envConf = ""; 
+        envConfigs = new HashMap<String, String>();
         // Kept separate in case we more env XML files and want to keep options throughout
+    }
+    
+    public String getEnvConfigValue(String name_id) {
+        // Returns value of environment configuration option if it was added to template
+        if (!envConfigs.containsKey(name_id)){
+            return "";
+        }
+        return envConfigs.get(name_id);
     }
 
     public String get() {
@@ -127,6 +139,8 @@ public class CaseTemplate {
         for (i = 0; i < names.length; i++) {
             if (values[i] != null && !values[i].isEmpty() && !values[i].equalsIgnoreCase(defaults[i])) {
                 envConf += xmlChange("env_conf.xml", names[i], values[i]);
+                envConfigs.remove(names[i]); // keeps single value in hashmap hopefully
+                envConfigs.put(names[i], values[i]);
             }
         }
 

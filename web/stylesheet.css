@@ -85,3 +85,10 @@ smallNote {
 li {
     padding-bottom: 8px;
 }
+
+normalText {
+    
+}
+normalText:hover {
+    text-decoration: underline;
+}

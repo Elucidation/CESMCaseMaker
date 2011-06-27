@@ -26,7 +26,7 @@ public class AutoCompleteServlet extends HttpServlet {
     private ServletContext context;
     private CaseTemplate template = new CaseTemplate();
     private EnvConfigData envCfgData = new EnvConfigData();
-    private HashMap envConfigOptions = envCfgData.getEnvConfigOptions();
+    private HashMap envConfigOptions = envCfgData.getEnvConfigOptions(); // Contains only table data & defaults, not options chosen
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -91,7 +91,11 @@ public class AutoCompleteServlet extends HttpServlet {
             template.resetPopulatedTemplate();
             //System.err.println("Start here");
             template.fillTemplate(casename, resolution, compset, machine);
-            response.getWriter().write("<create_newcase>" + template.get() + "</create_newcase>");
+            String wrapper = "<wrap>"
+                    + "<create_newcase>" + template.get() + "</create_newcase>"
+                    + "<env_conf>" + getEnvConfigOptionsXML() + "</env_conf>"
+                    + "</wrap>";
+            response.getWriter().write(wrapper);
             //System.err.println("end here");
         } else if (action.equals("fillEnvConf")) {
             // Paramters passed in
@@ -111,16 +115,21 @@ public class AutoCompleteServlet extends HttpServlet {
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
             template.fillEnvConf(envParams);
-            response.getWriter().write("<create_newcase>" + template.get() + "</create_newcase>");
+            //response.getWriter().write("<create_newcase>" + template.get() + "</create_newcase>");
+            String wrapper = "<wrap>"
+                    + "<create_newcase>" + template.get() + "</create_newcase>"
+                    + "<env_conf>" + getEnvConfigOptionsXML() + "</env_conf>"
+                    + "</wrap>";
+            response.getWriter().write(wrapper);
         } else if (action.equals("loadOptionsEnvConf")) {
             // Set up visible options table in index.jsp
             //System.err.println("Got called by loadOptionsEnvConf.");
             //  Send Response
             String level = request.getParameter("level");
-            if (level!=null && level.equalsIgnoreCase("full")) { // Reset template fully
+            if (level != null && level.equalsIgnoreCase("full")) { // Reset template fully
                 template.resetEnvConfOptions();
                 template.resetPopulatedTemplate();
-                
+
             }
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
@@ -128,6 +137,15 @@ public class AutoCompleteServlet extends HttpServlet {
         } else {
             //nothing to show
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
+
+        // Put this separate for now
+        if (action.equals("fillEnvConf")) {
+            Iterator it = envConfigOptions.keySet().iterator();
+            while (it.hasNext()) {
+                String id = (String) it.next();
+                EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);
+            }
         }
     }
 
@@ -146,14 +164,23 @@ public class AutoCompleteServlet extends HttpServlet {
         while (it.hasNext()) {
             String id = (String) it.next();
             EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);
-            output += "<envConfigOption>";
-            output += "<id>" + option.getId() + "</id>";
-            output += "<name>" + option.getName() + "</name>";
-            output += "<defaultValue>" + option.getDefaultValue() + "</defaultValue>";
-            // Add check to CaseTemplate where if value has previously been added, use that instead of default
-            output += "<readableName>" + option.getReadableName() + "</readableName>";
-            output += "<description>" + option.getDescription() + "</description>";
-            output += "</envConfigOption>";
+            if (doCheck(option)) {
+                    // This option should be disabled due to values in other parts of the config
+                    //String param = option.getName() + "-field");
+                output += "<envConfigOption>";
+                output += "<id>" + option.getId() + "</id>";
+                output += "<name>" + option.getName() + "</name>";
+                if (!template.getEnvConfigValue(option.getName()).isEmpty()) {
+                    //System.err.println("Well, it should work: " + template.getEnvConfigValue(option.getName()));
+                    output += "<defaultValue>" + template.getEnvConfigValue(option.getName()) + "</defaultValue>";
+                } else {
+                    output += "<defaultValue>" + option.getDefaultValue() + "</defaultValue>";
+                }
+                // Add check to CaseTemplate where if value has previously been added, use that instead of default
+                output += "<readableName>" + option.getReadableName() + "</readableName>";
+                output += "<description>" + option.getDescription() + "</description>";
+                output += "</envConfigOption>";
+            }
         }
         return output;
     }
@@ -179,4 +206,20 @@ public class AutoCompleteServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private boolean doCheck(EnvConfigOption option) {
+        // Checks if there is special circumstance for field given
+        // This hardcoding needs to be moved to either SQL table merges of some sort (for deduction only)
+        // Or for a more powerful comparison, OWL ontology inference engine.
+
+        // RUN_STARTDATE only allowed if RUN_TYPE == Startup|Hybrid
+        if (option.getName().equalsIgnoreCase("RUN_STARTDATE")
+                && template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase("Branched")) {
+            return false;
+        } else {
+            //System.err.println(option.getName());
+            return true;
+        }
+
+    }
 }
