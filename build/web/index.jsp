@@ -20,6 +20,7 @@
             which is a global climate model used by the <a href="http://ncar.ucar.edu/">National Center for Atmospheric Research</a> for running simulations of the earth's climate.</p>
 
         <p>Defaults provided, As you fill out the options below the template will auto-update on the side.</p>
+        <p>Hover over words to get more information about them, as well as direct links to CESM documentation</p> 
         <h6>You can copy/download the script to run from your CESM home directory.</h6>
 
         <form name="autofillform" > <!--action="autocomplete" removed this since no action -->
@@ -123,10 +124,21 @@
         <ul>
             <li>Environment Configuration Option Fields are automatically generated, 
                 as are the xmlchange additions to the template, all loaded from a table (HashMap atm)</li>
+            <li>Run Type effects 3 other configuration options, depending on it's value:
+                <ul>
+                    <li><i>Startup</i> : Reference Case & Date are not used</li>
+                    <li><i>Branched</i> : Start Date is not used</li>
+                    <li><i>Hybrid</i> : Any can be used</li>
+                </ul>
+                These constraints can be described in either direction, and 
+                currently resides in a separate doCheck() function that does a 
+                boolean check to see if constraint is satisfied, this will make
+                it easier to connect an inference engine to the system.
+            </li>
             <li>Start Date is only used when the run type is a startup or 
                 hybrid, since a branched run has it's start date as the end 
                 of the branch.</li>
-            <li>Disabled - Start Date disappears when not needed, as does the template
+            <li>Start Date disappears when not needed, as does the template
                 effect, these sort of relationships can be mapped accurately 
                 using an <a href="http://en.wikipedia.org/wiki/Web_Ontology_Language">OWL ontology</a> 
                 (or for just deduction & speed, an sql database), 
