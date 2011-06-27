@@ -101,7 +101,7 @@ public class AutoCompleteServlet extends HttpServlet {
         } else if (action.equals("fillEnvConf")) {
             // Paramters passed in
             String[] envParams = new String[envConfigOptions.size()];
-            Iterator it = envConfigOptions.keySet().iterator();
+            Iterator it = envCfgData.getIterator();
             int i = 0;
             while (it.hasNext()) {
                 String id = (String) it.next();
@@ -149,7 +149,7 @@ public class AutoCompleteServlet extends HttpServlet {
         // Put this separate for now
         /*
         if (action.equals("fillEnvConf")) {
-            Iterator it = envConfigOptions.keySet().iterator();
+            Iterator it = envCfgData.getSet().iterator();
             while (it.hasNext()) {
                 String id = (String) it.next();
                 EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);
@@ -169,7 +169,7 @@ public class AutoCompleteServlet extends HttpServlet {
          *</envConfigOption>
          */
         String output = "";
-        Iterator it = envConfigOptions.keySet().iterator();
+        Iterator it = envCfgData.getIterator();
         while (it.hasNext()) {
             String id = (String) it.next();
             EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);

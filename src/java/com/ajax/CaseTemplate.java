@@ -51,7 +51,7 @@ public class CaseTemplate {
         
         // Set up defaults hash from original hash, remove this hack ASAP
         // this makes a hash linking name(_id) to default values
-        Iterator it = envConfigOptions.keySet().iterator();
+        Iterator it = envCfgData.getIterator();
         while (it.hasNext()) {
             String id = (String) it.next();
             EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);
@@ -131,7 +131,7 @@ public class CaseTemplate {
         String[] names = new String[envConfigOptions.size()];
         String[] values = new String[envConfigOptions.size()];
         String[] defaults = new String[envConfigOptions.size()];
-        Iterator it = envConfigOptions.keySet().iterator();
+        Iterator it = envCfgData.getSet().iterator();
         int i = 0;
         while (it.hasNext()) {
         String id = (String) it.next();
@@ -176,7 +176,7 @@ public class CaseTemplate {
         String[] values = new String[envConfigOptions.size()];
         String[] defaults = new String[envConfigOptions.size()];
 
-        Iterator it = envConfigOptions.keySet().iterator();
+        Iterator it = envCfgData.getIterator();
         int i = 0;
         while (it.hasNext()) {
             String id = (String) it.next();
