@@ -28,7 +28,10 @@ class ConfigTemplate {
     }
     private String[] placeholders;
     private String[] replacements;
-    private EnvConfigData envConfigTable = new EnvConfigData(); // Used to see if passed placeholder is an environment xml variable
+    
+    // Used to see if passed placeholder is an environment xml variable
+    private EnvConfigData envConfigTable = new EnvConfigData(); // keys are UPPERCASE
+    
     private static final String[] ENV_LOCATION_PLACEHOLDERS = {"ENVCASE","ENVCONF","ENVBUILD","ENVRUN"}; // The 4 places in cesm configuration where editing environment files goes
 
     public ConfigTemplate() {
@@ -58,20 +61,23 @@ class ConfigTemplate {
     String get() {
         String outTemplate = template;
         for (int i=0;i<placeholders.length;i++) {
+            System.err.println(placeholders[i]);
             // if it's an env_config.xml change, do special replace to keep location
-            if (envConfigTable.getEnvConfigOptions().containsKey(placeholders[i])) {
-                outTemplate = outTemplate.replaceAll(placeholders[i], 
+            if (envConfigTable.getEnvConfigOptions().containsKey(placeholders[i].toUpperCase())) {
+                // Only Env Config works atm but any env xml can be implemented
+                outTemplate = outTemplate.replaceFirst(ENV_LOCATION_PLACEHOLDERS[1], 
                         ENV_LOCATION_PLACEHOLDERS[1]+"\n"
-                        +replacements[i] // add xmlchange
+                        +xmlChange("env_conf.xml",placeholders[i], replacements[i]) // add xmlchange
                         ); 
             } else {
                 outTemplate = outTemplate.replaceAll(placeholders[i], replacements[i]);
             }
         }
         
+        
         // Now remove all env_config location placeholders
         for (String environmentLocationPlaceholder : ENV_LOCATION_PLACEHOLDERS) {
-            outTemplate = outTemplate.replaceAll(environmentLocationPlaceholder, "");
+            outTemplate = outTemplate.replaceAll(environmentLocationPlaceholder+"\n", "");
         }
         
         return outTemplate;
@@ -87,7 +93,7 @@ class ConfigTemplate {
     public static String xmlChange(String file, String id, String value) {
         return "xmlchange -file " + file
                 + " -id " + id
-                + " -val " + value + "\n";
+                + " -val " + value;
     }
 
     /** Read a File to a string

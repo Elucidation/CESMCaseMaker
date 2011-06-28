@@ -48,10 +48,8 @@ public class fillTemplate extends HttpServlet {
 
     private String buildPopulatedTemplateString(String[] names, String[] values) {
         // Expects names & values to never be null
-        for (int i = 0; i < names.length; i++) {
-            // For each placeholder, fill it in in the template
-            template.passReplacements(names,values);
-        }
+        assert(names.length==values.length); // Stuff being passed doesn't map one-one
+        template.passReplacements(names,values);
         return template.get();
     }
 
