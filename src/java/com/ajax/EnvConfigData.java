@@ -9,8 +9,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
 
-/**
- *
+/** Data stored in HashMap, pulled via getEnvConfigOptions()
+ * format : String id, String name, String defaultValue, String readableName, String description
  * @author Sam
  */
 public class EnvConfigData {
