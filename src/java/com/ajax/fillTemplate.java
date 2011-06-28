@@ -6,9 +6,7 @@ package com.ajax;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -18,52 +16,45 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ * Requires all parameters passed to be lower case, and directly what are in the template
  * @author Sam
  */
 @WebServlet(name = "fillTemplate", urlPatterns = {"/fillTemplate"})
 public class fillTemplate extends HttpServlet {
+
     private ServletContext context;
+    ConfigTemplate template = new ConfigTemplate(); // template helps determine valid parameters, and of course, the output.
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        this.context = config.getServletContext();
-    }
-    
-    // The are the placeholders (All lowercase)
-    private String[] placeholders = ("casename resolution compset machine " // the basic create_newcase.sh parameters
-            + "RUN_TYPE RUN_STARTDATE RUN_REFCASE RUN_REFDATE" // Come env_conf.xml Environment Variables
-            + "").toLowerCase().split(" ");
-    private String[] envPlaceholders = "".split(" ");
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try {
-            /* TODO output your page here*/
-            /*
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet fillTemplate</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet fillTemplate at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-            */
-        } finally {            
-            out.close();
+    private String buildParameterXML(String[] names, String[] values) {
+        // Expects names & values to never be null, only template valid parameters are passed
+        StringBuilder out = new StringBuilder();
+        out.append("<parameters>");
+
+        for (int i = 0; i < names.length; i++) {
+            out.append(String.format("<parameter name=\"%s\" value=\"%s\"/>", names[i], values[i]));
         }
+        out.append("</parameters>");
+        return out.toString();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    private String buildPopulatedTemplateXML(String[] names, String[] values) {
+        // Expects names & values to never be null
+        StringBuilder out = new StringBuilder();
+        out.append("<template>");
+        out.append(buildPopulatedTemplateString(names, values));
+        out.append("</template>");
+        return out.toString();
+    }
+
+    private String buildPopulatedTemplateString(String[] names, String[] values) {
+        // Expects names & values to never be null
+        for (int i = 0; i < names.length; i++) {
+            // For each placeholder, fill it in in the template
+            template.passReplacements(names,values);
+        }
+        return template.get();
+    }
+
     /** 
      * Handles the HTTP <code>GET</code> method.
      * @param request servlet request
@@ -75,54 +66,65 @@ public class fillTemplate extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        
+
         if (action == null) {
             context.getRequestDispatcher("/error.jsp").forward(request, response);
-        } else if (action.equals("fill")) {
-            
-            // Get values of valid parameters
-            String[] pValues = new String[placeholders.length];
-            for (int i=0;i<placeholders.length;i++) {
-                pValues[i] = request.getParameter(placeholders[i]); // null if doesn't exist
-            }
-            
-            
-            
-            response.setContentType("text/xml");
-            PrintWriter out = response.getWriter();
-            try {
+        } else if (action.equals("fill") || action.equals("fillSimple") || action.equals("fillHTML")) {
 
-                /* TODO output your page here*/
-                out.println("<parameters>");
-                
-                for (int i=0;i<placeholders.length;i++) {
-                    if (pValues[i] != null)
-                        out.println(String.format("<parameter name=\"%s\" value=\"%s\"/>",placeholders[i],pValues[i]));
+            // Get values of valid parameters
+            ArrayList<String> names = new <String>ArrayList();
+            ArrayList<String> values = new <String>ArrayList();
+            for (int i = 0; i < ConfigTemplate.getValidPlaceholders().length; i++) {
+                String value = request.getParameter(ConfigTemplate.getValidPlaceholders()[i].toLowerCase()); // null if doesn't exist
+                if (value != null) {
+                    names.add( ConfigTemplate.getValidPlaceholders()[i] );
+                    values.add( value );
                 }
-                out.println("</parameters>");
-                
-                
-            } finally {            
-                out.close();
+            }
+            String[] placeholders = new String[names.size()];
+            String[] pValues = new String[names.size()];
+            for (int i=0;i<names.size();i++){
+                placeholders[i] = names.get(i);
+                pValues[i] = values.get(i);
             }
             
             
+
+
+            if (action.equals("fillSimple") || action.equals("fillHTML")) {
+                // Respond a populated template as a string
+                response.setContentType("text/html;charset=UTF-8");
+                PrintWriter out = response.getWriter();
+                try {
+                    if (action.equals("fillHTML")) {
+                        // replace \n with <br> so it shows up in browser
+                        out.print(buildPopulatedTemplateString(placeholders, pValues).replaceAll("\n","<br>"));
+                    } else {
+                        // Simple
+                        out.print(buildPopulatedTemplateString(placeholders, pValues));
+                    }
+                } finally {
+                    out.close();
+                }
+            } else {
+                // Respond with parameters + filled template wrapped in xml
+                response.setContentType("text/xml");
+                PrintWriter out = response.getWriter();
+                try {
+                    out.print("<wrapper>");
+                    out.print(buildParameterXML(placeholders, pValues));
+                    out.print(buildPopulatedTemplateXML(placeholders, pValues));
+                    out.print("</wrapper>");
+
+                } finally {
+                    out.close();
+                }
+            }
+
+
         } else {
             context.getRequestDispatcher("/error.jsp").forward(request, response);
         }
-    }
-
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
     }
 
     /** 
@@ -131,6 +133,12 @@ public class fillTemplate extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+        return "Returns a populated CESM configuration template from passed parameters";
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        this.context = config.getServletContext();
+    }
+    
 }

@@ -3,23 +3,29 @@
 # For example: '~/home/cesm1_0', referred to from here on as CESM_ROOT
 #
 # This script creates a new CESM case named 'CASENAME' 
-# located in the CESM_ROOT/CASEROOT directory.
+# located in the CESM_ROOT/scripts/CASENAME directory.
 # It then configures, builds and runs the case.
+
+ENVCASE
 
 echo "Creating new case..."
 scripts/create_newcase -case CASENAME -res RESOLUTION -compset COMPSET -mach MACHINE
 
-cd CASEROOT
+cd scripts/CASENAME
 
 ENVCONF
+
 echo "Configuring case..."
 configure -cleanall
 configure -case
 
+ENVBUILD
 
 echo "Building case..."
 CASENAME.MACHINE.clean_build
 CASENAME.MACHINE.build
+
+ENVRUN
 
 echo "Running simulation..."
 CASENAME.MACHINE.run
