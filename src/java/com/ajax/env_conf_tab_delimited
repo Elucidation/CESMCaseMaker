@@ -1,0 +1,68 @@
+Name	Type	Default	Description [Valid Values]
+ATM_NCPL	char	24	number of atm coupling intervals per day
+BRNCH_RETAIN_CASENAME	logical	FALSE	"allow same branch casename as reference casename [TRUE,FALSE]"
+CAM_CONFIG_OPTS	char		"CAM configure options, see CAM configure utility for details"
+CAM_DYCORE	char	fv	"CAM dynamical core [eul,fv,homme]"
+CAM_NAMELIST_OPTS	char		CAM specific namelist settings for -namelist option
+CAM_NML_USE_CASE	char	UNSET	CAM namelist use_case
+CCSM_BGC	char	none	"BGC flag [none,CO2A,CO2B,CO2C,CO2_DMSA]"
+CCSM_CO2_PPMV	real	379	CO2 ppmv
+CCSM_VOC	char	FALSE	"Only used for B,E,F,I compsets: if true will pass VOC fields from lnd to atm [TRUE,FALSE]"
+CICE_CONFIG_OPTS	char		"CICE configure options, see CICE configure utility for details"
+CICE_MODE	char	prognostic	"cice mode [prognostic,prescribed,thermo_only]"
+CICE_NAMELIST_OPTS	char		CICE specific namelist settings for -namelist option
+CLM_BLDNML_OPTS	char		Options to send to CLM build-namelist (see models/lnd/clm/bld/build-namelist -h for list of options)
+CLM_CO2_TYPE	char	constant	"clm CO2 type, constant means value in CLM namelist, diagnostic or prognostic mean use the value sent from the atmosphere model [constant,diagnostic,prognostic]"
+CLM_CONFIG_OPTS	char		Options to send to CLM configure (see models/lnd/clm/bld/configure -h for list of options)
+CLM_FORCE_COLDSTART	char	off	"Value of 'on' forces model to spinup from a cold-start (arbitrary initial conditions) [on,off]"
+CLM_NAMELIST_OPTS	char		"Namelist settings to add to the clm_inparm namelist Note, use ' around character values, as XML parser can't handle quotes inside strings. (list of item=value settings, see models/lnd/clm/bld/namelist_files/namelist_definition.xml)"
+CLM_NML_USE_CASE	char	UNSET	CLM namelist use_case (for a list see models/lnd/clm/bld/build-namelist -use_case list)
+CLM_PT1_NAME	char	UNSET	Name of single point resolution dataset to be used in I compset only (for a list see models/lnd/clm/bld/build-namelist -res list)
+CLM_USRDAT_NAME	char	UNSET	Data identifier name for CLM user-created datasets (see Quickstart.userdatasets)
+CPL_ALBAV	logical	FALSE	"Only used for C,G compsets: if true, compute albedos to work with daily avg SW down [true,false]"
+CPL_EPBAL	char	off	"Only used for C,G compsets: if ocn, ocn provides EP balance factor for precip [off,ocn]"
+DATM_CLMNCEP_YR_ALIGN	integer	-999	year align (simulation year corresponding to starting year) for CLM_QIAN mode
+DATM_CLMNCEP_YR_END	integer	-999	ending year to loop atmosphere forcing data over for CLM_QIAN mode
+DATM_CLMNCEP_YR_START	integer	-999	starting year to loop atmosphere forcing data over for CLM_QIAN mode
+DATM_CPL_CASE	char	UNSET	the case name to use for cpl history forcing data for CPLHIST3HrWx mode
+DATM_CPL_YR_ALIGN	integer	-999	year align (simulation year corresponding to starting year) for CPLHIST3HrWx mode
+DATM_CPL_YR_END	integer	-999	ending year to loop data over for CPLHIST3HrWx mode
+DATM_CPL_YR_START	integer	-999	starting year to loop data over for CPLHIST3HrWx mode
+DATM_MODE	char	CORE2_NYF	"DATM mode [CORE2_NYF,CLM_QIAN,CLM1PT,CPLHIST3HrWx]"
+DATM_PRESAERO	char	none	"DATM prescribed aerosol forcing [none,clim_1850,clim_2000,trans_1850-2000,rcp2.6,rcp4.5,rcp6.0,rcp8.5,pt1_pt1]"
+DICE_MODE	char	ssmi	DICE mode [ssmi]
+DLND_MODE	char	NULL	"DLND mode [CPLHIST,NULL]"
+DLND_RUNOFF_MODE	char	RX1	"DLND runoff mode [CPLHIST,RX1,NULL]"
+DOCN_MODE	char	prescribed	"DOCN mode [prescribed,som]"
+DOCN_SSTDATA_FILENAME	char	UNSET	"Sets sst/ice_cov filename for amip runs, only used in F compset"
+DOCN_SSTDATA_YEAR_END	integer	-999	"Sets year end of sst/ice_cov for amip runs, only used in F compset"
+DOCN_SSTDATA_YEAR_START	integer	-999	"Sets year start of sst/ice_cov for amip runs, only used in F compset"
+GET_REFCASE	logical	FALSE	"flag for automatically prestaging the refcase restart dataset [TRUE,FALSE]"
+GLC_GRID	char	gland20	"Glacier model grid [gland20,gland10,gland5]"
+GLC_NCPL	integer	1	number of glc coupling intervals per day (integer)
+ICE_NCPL	char	$ATM_NCPL	number of ice coupling intervals per day (integer)
+LND_NCPL	char	$ATM_NCPL	number of land coupling intervals per day (integer)
+MAP_A2LF_FILE	char	UNSET	atm to land mapping file for fluxes
+MAP_A2LS_FILE	char	UNSET	atm to land mapping file for states
+MAP_A2OF_FILE	char	UNSET	atm to ocn flux mapping file for fluxes (currently first order conservative)
+MAP_A2OS_FILE	char	UNSET	atm to ocn state mapping file for states (currently bilinear)
+MAP_L2AF_FILE	char	UNSET	land to atm mapping file for fluxes
+MAP_L2AS_FILE	char	UNSET	land to atm mapping file for states
+MAP_O2AF_FILE	char	UNSET	ocn to atm mapping file for fluxes (currently first order conservative)
+MAP_O2AS_FILE	char	UNSET	ocn to atm mapping file for states
+MAP_R2O_FILE_R05	char	UNSET	runoff (.5 degree) to ocn mapping file
+MAP_R2O_FILE_R19	char	UNSET	runoff (19 basin) to ocn mapping file
+MAP_R2O_FILE_RX1	char	UNSET	runoff (1 degree) to ocn mapping file
+MPISERIAL_SUPPORT	logical	FALSE	"TRUE implies this machine supports the use of the mpiserial lib. Not all machines support the use of the mpiserial lib. For those that do NOT you will have to make changes similar to other machines that do support it in order for it to work. NOTE: DO NOT SET THIS TO TRUE WITHOUT MAKING THE REQUIRED CHANGES TO THE Macros AND env_machopts FILES!!! [TRUE,FALSE]"
+OCN_CHL_TYPE	char	diagnostic	"provenance of surface Chl for radiative penetration computations [diagnostic,prognostic]"
+OCN_CO2_FLUX_OCMIP_BUG_FIX	char	TRUE	"TRUE implies using fix to pH scale of carbon thermodynamic constants [TRUE,FALSE]"
+OCN_CO2_TYPE	char	constant	"provenance of atmospheric CO2 for gas flux computation [constant,prognostic,diagnostic]"
+OCN_COUPLING	char	full	"surface heat and freshwater forcing, partial is consistent with coupling to a data atm model [full,partial]"
+OCN_ICE_FORCING	char	active	"under ice forcing, inactive is consistent with coupling to a data ice model [active,inactive]"
+OCN_NCPL	char	1	number of ocn coupling intervals per day (integer)
+OCN_TRANSIENT	char	unset	"specification of transient forcing datasets [unset,1850-2000]"
+RUN_REFCASE	char	case.std	Reference case for hybrid or branch runs
+RUN_REFDATE	char	0001-01-01	Reference date for hybrid or branch runs (yyyy-mm-dd). Used to determine the component dataset that the model starts from. Ignored for startup runs
+RUN_STARTDATE	char	0001-01-01	Run start date (yyyy-mm-dd). Only used for startup or hybrid runs Ignored for branch runs.
+RUN_TYPE	char	startup	"Run initialization type [startup,hybrid,branch]"
+USE_MPISERIAL	logical	FALSE	"TRUE implies code is built using the mpiserial library. If TRUE, the MPISERIAL_SUPPORT must also be TRUE. FALSE (default) implies that code is built with a real MPI library. If a job uses only one MPI task (e.g. single-column CAM and CLM), the mpiserial lib may be an alternative to real mpi lib [TRUE,FALSE]"

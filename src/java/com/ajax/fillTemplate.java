@@ -74,6 +74,9 @@ public class fillTemplate extends HttpServlet {
             ArrayList<String> values = new <String>ArrayList();
             for (int i = 0; i < ConfigTemplate.getValidPlaceholders().length; i++) {
                 String value = request.getParameter(ConfigTemplate.getValidPlaceholders()[i].toLowerCase()); // null if doesn't exist
+                if (value == null) {
+                    value = request.getParameter(ConfigTemplate.getValidPlaceholders()[i].toUpperCase()); // try Upper Case also
+                }
                 if (value != null) {
                     names.add( ConfigTemplate.getValidPlaceholders()[i] );
                     values.add( value );

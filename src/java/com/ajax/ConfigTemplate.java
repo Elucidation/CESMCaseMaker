@@ -18,9 +18,11 @@ import java.nio.charset.Charset;
 class ConfigTemplate {
     private static String template;
     private static final String templateFileLocation = "template";
+    private static final EnvConfigData envConfigTable = new EnvConfigData(); // keys are UPPERCASE
     // The are the placeholders, case sensitive
     private static final String[] validPlaceholders = ("casename resolution compset machine " // the basic create_newcase.sh parameters
-            + "RUN_TYPE RUN_STARTDATE RUN_REFCASE RUN_REFDATE" // Come env_conf.xml Environment Variables
+            //+ "RUN_TYPE RUN_STARTDATE RUN_REFCASE RUN_REFDATE" // Come env_conf.xml Environment Variables
+            + envConfigTable.getKeysAsString(" ")
             + "").split(" ");
 
     public static String[] getValidPlaceholders() {
@@ -30,7 +32,7 @@ class ConfigTemplate {
     private String[] replacements;
     
     // Used to see if passed placeholder is an environment xml variable
-    private EnvConfigData envConfigTable = new EnvConfigData(); // keys are UPPERCASE
+    
     
     private static final String[] ENV_LOCATION_PLACEHOLDERS = {"ENVCASE","ENVCONF","ENVBUILD","ENVRUN"}; // The 4 places in cesm configuration where editing environment files goes
 
@@ -61,7 +63,7 @@ class ConfigTemplate {
     String get() {
         String outTemplate = template;
         for (int i=0;i<placeholders.length;i++) {
-            System.err.println(placeholders[i]);
+            //System.err.println(placeholders[i]);
             // if it's an env_config.xml change, do special replace to keep location
             if (envConfigTable.getEnvConfigOptions().containsKey(placeholders[i].toUpperCase())) {
                 // Only Env Config works atm but any env xml can be implemented
