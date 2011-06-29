@@ -50,16 +50,28 @@ public class EnvConfigData {
     public EnvConfigData() {
         // This entire file is just a placeholder till SQL DB is implemented.
         try {
-            loadFromTabDelimitedFile("env_conf_tab_delimited");
+            envConfigOptions = loadFromTabDelimitedFile("env_conf_tab_delimited");
         } catch (Exception e) {
-            System.err.println("Couldn't load file for environment options");
+            System.err.println("Couldn't load file for environment config options");
             envConfigOptions.put("RUN_TYPE", new EnvConfigOption("1", "RUN_TYPE", "startup", "Run Type", "Run initialization type [startup,hybrid,branch]"));
             envConfigOptions.put("RUN_STARTDATE", new EnvConfigOption("2", "RUN_STARTDATE", "0001-01-01", "Start Date", "Run start date (yyyy-mm-dd). Only used for startup or hybrid runs Ignored for branch runs."));
             envConfigOptions.put("RUN_REFCASE", new EnvConfigOption("3", "RUN_REFCASE", "case.std", "Reference Case", "Reference case for hybrid or branch runs"));
             envConfigOptions.put("RUN_REFDATE", new EnvConfigOption("4", "RUN_REFDATE", "0001-01-01", "Reference Date", "Reference date for hybrid or branch runs (yyyy-mm-dd). Used to determine the component dataset that the model starts from. Ignored for startup runs"));
         }
+        try {
+            envBuildOptions = loadFromTabDelimitedFile("env_build_tab_delimited");
+        } catch (Exception e) {
+            System.err.println("Couldn't load file for environment build options");
+        }
+        try {
+            envRunOptions = loadFromTabDelimitedFile("env_run_tab_delimited");
+        } catch (Exception e) {
+            System.err.println("Couldn't load file for environment run options");
+        }
 
         // Used to sort data, since it's not for some reason
+        TreeMap allMap = new TreeMap();
+        
         TreeMap sortedConfigMap = new TreeMap();
         sortedConfigMap.putAll(envConfigOptions);
         setConfig = sortedConfigMap.keySet();
@@ -72,9 +84,11 @@ public class EnvConfigData {
         sortedRunMap.putAll(envRunOptions);
         setRun = sortedRunMap.keySet();
         
-        setAll = setConfig;
-        setAll.addAll(setBuild);
-        setAll.addAll(setRun);
+        allMap.putAll(envConfigOptions);
+        allMap.putAll(envBuildOptions);
+        allMap.putAll(envRunOptions);
+        
+        setAll = allMap.keySet();
         // Values from env_conf.xml variables : http://www.cesm.ucar.edu/models/cesm1.0/cesm/cesm_doc/a4288.html
     }
 
@@ -84,11 +98,11 @@ public class EnvConfigData {
      * @param fileLocation
      * @throws FileNotFoundException 
      */
-    private void loadFromTabDelimitedFile(String fileLocation) throws FileNotFoundException, IOException {
+    private HashMap loadFromTabDelimitedFile(String fileLocation) throws FileNotFoundException, IOException {
         fileLocation = getClass().getResource(fileLocation).getPath();
         BufferedReader readbuffer = new BufferedReader(new FileReader(fileLocation));
         String strRead;
-
+        HashMap envOptions = new HashMap();
         int i = 0;
         while ((strRead = readbuffer.readLine()) != null) {
             if (i == 0) {
@@ -100,7 +114,7 @@ public class EnvConfigData {
             // parts[2] is Default : Default value
             // parts[3] is Description : Description of parameter
             String niceName = parts[0].substring(0, 1) + parts[0].substring(1).replaceAll("_", " ").toLowerCase(); // Nice version
-            envConfigOptions.put(parts[0], new EnvConfigOption(
+            envOptions.put(parts[0], new EnvConfigOption(
                     Integer.toString(i), // Inner ID, not used
                     parts[0], // Name/ID
                     parts[2], // Default value
@@ -109,6 +123,7 @@ public class EnvConfigData {
                     ));
             i++;
         }
+        return envOptions;
     }
 
     String getKeysAsString(String delimiter) {

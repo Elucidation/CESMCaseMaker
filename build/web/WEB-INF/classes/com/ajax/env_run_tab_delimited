@@ -1,0 +1,101 @@
+Name	Type	Default	Description [Valid Values]
+AOFLUX_GRID	char	ocn	grid for atm ocn flux calc [ocn,atm,exch]
+ATM_PIO_NUMTASKS	integer	-1	atm pio number of io tasks
+ATM_PIO_ROOT	integer	-99	pio root processor
+ATM_PIO_STRIDE	integer	-99	pio stride
+ATM_PIO_TYPENAME	char	nothing	pio io type
+AVGHIST_DATE	integer	-999	yyyymmdd format, sets coupler time-average history date (like REST_DATE)
+AVGHIST_N	char	-999	sets coupler time-average history file frequency (like REST_N)
+AVGHIST_OPTION	char	never	sets coupler time-average history file frequency (like REST_OPTION)
+BATCHQUERY	char	UNSET	command used to query batch system
+BATCHSUBMIT	char	UNSET	command used to submit to batch system
+BFBFLAG	logical	FALSE	turns on bit-for-bit reproducibility with varying pe counts in the driver and coupler, performance will likely be reduced [TRUE,FALSE]
+BUDGETS	logical	FALSE	logical that turns on diagnostic budgets FALSE means budgets will never be written [TRUE,FALSE]
+BUDGET_ANNUAL	integer	1	output level for annual average budget diagnostics, written only if BUDGETS variable is TRUE, 0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm [0,1,2,3]
+BUDGET_DAILY	integer	0	output level for daily average budget diagnostics, written only if BUDGETS variable is TRUE, 0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm [0,1,2,3]
+BUDGET_INST	integer	0	output level for instantaneous budget diagnostics, written only if BUDGETS variable is TRUE, 0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm [0,1,2,3]
+BUDGET_LONGTERM_EOY	integer	1	output level for longterm average budget diagnostics written at end of year, written only if BUDGETS variable is TRUE, 0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm [0,1,2,3]
+BUDGET_LONGTERM_STOP	integer	0	output level for longterm average budget diagnostics written at end of run, written only if BUDGETS variable is TRUE, 0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm [0,1,2,3]
+BUDGET_MONTHLY	integer	1	output level for monthly average budget diagnostics, written only if BUDGETS variable is TRUE, 0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm [0,1,2,3]
+CALENDAR	char	NO_LEAP	calendar type [NO_LEAP,GREGORIAN]
+CASESTR	char	UNSET	case description
+CCSM_BASELINE	char	/UNSET	standard ccsm baselines directory for testing
+CCSM_CPRNC	char	/UNSET	standard location of the cprnc tool
+CCSM_REPOTAG	char	UNSET	CCSM tag
+CHECK_TIMING	logical	TRUE	logical to diagnose model timing at the end of the run [TRUE,FALSE]
+COMP_RUN_BARRIERS	logical	FALSE	if TRUE, turns on component run barrier calls in the driver [TRUE,FALSE]
+CONTINUE_RUN	logical	FALSE	A continue run extends an existing CCSM run exactly. A setting of TRUE implies a continuation run [TRUE,FALSE]
+CPL_PIO_NUMTASKS	integer	-1	pio number of io tasks
+CPL_PIO_ROOT	integer	-99	pio root processor
+CPL_PIO_STRIDE	integer	-99	pio stride
+CPL_PIO_TYPENAME	char	nothing	pio io type
+DIN_LOC_ROOT	char	$DIN_LOC_ROOT_CSMDATA	local inputdata directory for CCSM prestaged data
+DIN_LOC_ROOT_CLMQIAN	char	UNSET	general ccsm inputdata directory for CLM QIAN datm forcing files
+DIN_LOC_ROOT_CSMDATA	char	UNSET	general ccsm inputdata directory
+DOUT_L_HPSS_ACCNT	char	00000000	account number charged for long term archival on hpss
+DOUT_L_HTAR	logical	FALSE	logical to tar up long term archiver history files [TRUE,FALSE]
+DOUT_L_MS	logical	FALSE	logical to turn on long term archiving (if DOUT_S is also TRUE) [TRUE,FALSE]
+DOUT_L_MSROOT	char	UNSET	local long term archiving root directory
+DOUT_S	logical	TRUE	logical to turn on short term archiving [TRUE,FALSE]
+DOUT_S_ROOT	char	UNSET	local short term archiving root directory
+DOUT_S_SAVE_INT_REST_FILES	logical	FALSE	logical to archive all interim restart files, not just those at end of run [TRUE,FALSE]
+DRV_THREADING	logical	FALSE	Turns on component varying thread control in the driver [TRUE,FALSE]
+EPS_AAREA	real	9.0e-07	error tolerance for differences in atm/land areas in domain checking
+EPS_AGRID	real	1.0e-12	error tolerance for differences in atm/land lon/lat in domain checking
+EPS_AMASK	real	1.0e-13	error tolerance for differences in atm/land masks in domain checking
+EPS_FRAC	real	1.0e-02	error tolerance for differences in fractions in domain checking
+EPS_OAREA	real	1.0e-01	error tolerance for differences in ocean/ice areas in domain checking
+EPS_OGRID	real	1.0e-02	error tolerance for differences in ocean/ice lon/lat in domain checking
+EPS_OMASK	real	1.0e-06	error tolerance for differences in ocean/ice masks in domain checking
+GLC_PIO_NUMTASKS	integer	-1	pio number of io tasks
+GLC_PIO_ROOT	integer	-99	pio root processor
+GLC_PIO_STRIDE	integer	-99	pio stride
+GLC_PIO_TYPENAME	char	nothing	pio io type
+HISTINIT	logical	FALSE	logical to write an extra initial coupler history file [TRUE,FALSE]
+HIST_DATE	integer	-999	yyyymmdd format, sets coupler snapshot history date (like REST_DATE)
+HIST_N	char	-999	sets coupler snapshot history file frequency (like REST_N)
+HIST_OPTION	char	never	sets coupler snapshot history file frequency (like REST_OPTION)
+ICE_PIO_NUMTASKS	integer	-1	pio number of io tasks
+ICE_PIO_ROOT	integer	-99	pio root processor
+ICE_PIO_STRIDE	integer	-99	pio stride
+ICE_PIO_TYPENAME	char	nothing	pio io type
+INFO_DBUG	integer	1	level of debug output, 0=minimum, 1=normal, 2=more, 3=too much [0,1,2,3]
+LND_PIO_NUMTASKS	integer	-1	pio number of io tasks
+LND_PIO_ROOT	integer	-99	pio root processor
+LND_PIO_STRIDE	integer	-99	pio stride
+LND_PIO_TYPENAME	char	nothing	pio io type
+LOGDIR	char	$CASEROOT/logs	directory where log files should be copied in addition to archiving
+OCN_PIO_NUMTASKS	integer	-1	pio number of io tasks: uses pio_numtasks value if set to -99
+OCN_PIO_ROOT	integer	-99	pio root processor: uses pio_root value if set to -99
+OCN_PIO_STRIDE	integer	-99	pio stride: uses pio_stride value if set to -99
+OCN_PIO_TYPENAME	char	nothing	pio io type: uses pio_typename value if set to \
+OCN_TAVG_HIFREQ	char	FALSE	tavg output control for high-frequency output [TRUE,FALSE]
+OCN_TAVG_TRACER_BUDGET	char	FALSE	tavg output control for tracer-budget terms [TRUE,FALSE]
+OCN_TIGHT_COUPLING	logical	FALSE	if TRUE, treats ocean model like lnd/ice in coupling and removes 1 coupling period lag at the cost of concurrency [TRUE,FALSE]
+ORBITAL_MODE	char	fixed_year	orbital mode setting [fixed_year,variable_year,fixed_parameters]
+ORBITAL_YEAR	integer	1990	orbital year
+ORBITAL_YEAR_ALIGN	integer	1990	model year associated with orbital year for varying orbital years
+PIO_ASYNC_INTERFACE	logical	FALSE	TRUE implies perform asynchronous i/o [TRUE,FALSE]
+PIO_DEBUG_LEVEL	integer	0	pio debug level [0,1,2,3,4,5,6]
+PIO_NUMTASKS	integer	-1	pio number of io tasks
+PIO_ROOT	integer	1	pio root processor
+PIO_STRIDE	integer	4	mpi task stride between io tasks
+PIO_TYPENAME	char	netcdf	pio io type: netcdf, pnetcdf, netcdf4p, netcdf4c
+PTS_LAT	real(1)	-999.99	Points mode nearest latitudes
+PTS_LON	real(1)	-999.99	Points mode nearest longitudes
+REST_DATE	char	$STOP_DATE	date in yyyymmdd format, sets model restart write date with REST_OPTION and REST_N
+REST_N	char	$STOP_N	sets model restart writes with REST_OPTION and REST_DATE (same options as STOP_N)
+REST_OPTION	char	$STOP_OPTION	sets frequency of model restart writes (same options as STOP_OPTION) with REST_N and REST_DATE
+RESUBMIT	integer	0	if RESUBMIT is greater than 0, then case will automatically resubmit if that feature is supported in the run script
+SAVE_TIMING	logical	FALSE	logical to save timing files in rundir [TRUE,FALSE]
+SHR_MAP_DOPOLE	logical	TRUE	invoke pole averaging corrections in shr_map_mod weights generation [TRUE,FALSE]
+START_TOD	integer	0	start time-of-day in universal time (seconds), should be between zero and 86400
+STOP_DATE	integer	-999	date in yyyymmdd format, sets the run length with STOP_OPTION and STOP_N, can be in addition to STOP_OPTION and STOP_N, negative value implies off
+STOP_N	integer	5	sets the run length with STOP_OPTION and STOP_DATE
+STOP_OPTION	char	ndays	sets the run length with STOP_N and STOP_DATE STOP_OPTION alarms are: [none/never], turns option off [nstep/s] , stops every STOP_N nsteps , relative to current run start time [nsecond/s] , stops every STOP_N nseconds, relative to current run start time [nminute/s] , stops every STOP_N nminutes, relative to current run start time [nhour/s] , stops every STOP_N nhours , relative to current run start time [nday/s] , stops every STOP_N ndays , relative to current run start time [nmonth/s] , stops every STOP_N nmonths , relative to current run start time [nyear/s] , stops every STOP_N nyears , relative to current run start time [date] , stops at STOP_DATE value [ifdays0] , stops at STOP_N calendar day value and seconds equal 0 [end] , stops at end [none,never,nsteps,nstep,nseconds,nsecond,nminutes,nminute,nhours,nhour,ndays,nday,nmonths,nmonth,nyears,nyear,date,ifdays0,end]
+TIMER_LEVEL	integer	4	timer output depth [1,2,3,4,5,6,7,8,9,10]
+TIMING_BARRIER	logical	FALSE	if TRUE, turns on the timing barrier calls in the model [TRUE,FALSE]
+TPROF_DATE	integer	-999	yyyymmdd format, sets timing output file date (like REST_DATE)
+TPROF_N	char	-999	sets timing output file frequency (like REST_N)
+TPROF_OPTION	char	never	sets timing output file frequency (like REST_OPTION but relative to run start date)
+VECT_MAP	char	npfix	invoke vector mapping option [none,npfix,cart3d,cart3d_diag,cart3d_uvw,cart3d_uvw_diag]

@@ -1,0 +1,28 @@
+Name	Type	Default	Description [Valid Values]
+BUILD_COMPLETE	logical	FALSE	If TRUE, models have been built successfully. (DO NOT EDIT) [TRUE,FALSE]
+BUILD_STATUS	integer	0	Status of prior build. (DO NOT EDIT)
+BUILD_THREADED	logical	FALSE	TRUE implies always build model for openmp capability If FALSE, build model with openmp capability only if THREAD is greater than 1 [TRUE,FALSE]
+CICE_BLCKX	integer	0	Size of cice block in first horiz dimension. Value set by generate_cice_decomp.pl (called by configure). Only expert users should edit this
+CICE_BLCKY	integer	0	Size of cice block in second horiz dimension. Value set by generate_cice_decomp.pl (called by configure). Only expert users should edit this
+CICE_DECOMPTYPE	char	0	cice block distribution type. Value set by generate_cice_decomp.pl (called by configure). Only expert users should edit this
+CICE_MXBLCKS	integer	0	Max number of cice blocks per processor. Value set by generate_cice_decomp.pl (called by configure). Only expert users should edit this
+COMP_INTERFACE	char	MCT	use MCT or ESMF component interfaces [MCT,ESMF]
+DEBUG	logical	FALSE	TRUE implies turning on run and compile time debugging [TRUE,FALSE]
+ESMF_LIBDIR	char	 	directory of esmf.mk in pre-built ESMF library
+EXEROOT	char	UNSET	executable root directory
+GLC_NEC	integer	0	GLC land ice model number of elevation classes [0,3,5,10]
+GMAKE	char	gmake	Fullname of GNU make command (usually gmake)
+GMAKE_J	integer	1	Number of processors for gmake
+INCROOT	char	$EXEROOT/lib/include	case lib include directory
+LIBROOT	char	$EXEROOT/lib	case lib directory
+OBJROOT	char	$EXEROOT	case build directory
+OCN_TRACER_MODULES	char	iage	Optional ocean tracers. Any combination of: iage cfc ecosys
+PIO_CONFIG_OPTS	char	 --disable-mct --disable-timing	PIO configure options, see PIO configure utility for details
+POP_BLCKX	integer	0	Size of pop block in first horiz dimension. Value determined by generate_pop_decomp.pl which is called by configure. Only expert users should edit this
+POP_BLCKY	integer	0	Size of pop block in second horiz dimension. Value determined by generate_pop_decomp.pl which is called by configure. Only expert users should edit this
+POP_DECOMPTYPE	char	0	pop block distribution type. Value determined by generate_pop_decomp.pl which is called by configure
+POP_MXBLCKS	integer	0	Max number of pop blocks per processor. Value determined by generate_pop_decomp.pl which is called by configure. Only expert users should edit this
+RUNDIR	char	$EXEROOT/run	case run directory
+SMP_BUILD	char	0	smp status of previous build, coded string. (DO NOT EDIT)
+SMP_VALUE	char	0	smp status of current setup, coded string (DO NOT EDIT)
+USE_ESMF_LIB	char	FALSE	TRUE implies using the ESMF library specified by ESMF_LIBDIR or ESMFMKFILE [TRUE,FALSE]
