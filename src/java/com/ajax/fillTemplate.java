@@ -21,7 +21,17 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "fillTemplate", urlPatterns = {"/fillTemplate"})
 public class fillTemplate extends HttpServlet {
-
+    
+    // Just to keep track of statistics for fun and giggles, as well how to optimize, but mostly fun and giggles.
+    private double StatNumNullCalls = 0;
+    private double StatNumNullParams = 0;
+    private double StatNumFillCalls = 0;
+    private double StatNumFillParams = 0;
+    private double StatNumFillHTMLCalls = 0;
+    private double StatNumFillHTMLParams = 0;
+    private double StatNumFillSimpleCalls = 0;
+    private double StatNumFillSimpleParams = 0;
+    
     private ServletContext context;
     ConfigTemplate template = new ConfigTemplate(); // template helps determine valid parameters, and of course, the output.
 
@@ -47,9 +57,13 @@ public class fillTemplate extends HttpServlet {
     }
 
     private String buildPopulatedTemplateString(String[] names, String[] values) {
-        // Expects names & values to never be null
-        assert(names.length==values.length); // Stuff being passed doesn't map one-one
-        template.passReplacements(names,values);
+        // if names or values is null or not same size, return unpopulated template
+        if (names == null || values == null || names.length != values.length) {
+            return template.get();
+        } else {
+            template.passReplacements(names, values);
+        }
+
         return template.get();
     }
 
@@ -64,9 +78,21 @@ public class fillTemplate extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-
+        int NumberOfParams = request.getParameterMap().size();
+        
+        
         if (action == null) {
-            context.getRequestDispatcher("/error.jsp").forward(request, response);
+            StatNumNullCalls++;
+            StatNumNullParams += NumberOfParams;
+            // Assumes they just want an unpopulated template
+            response.setContentType("text/html;charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            try {
+                out.print(buildPopulatedTemplateString(null, null));
+            } finally {
+                out.close();
+            }
+            //context.getRequestDispatcher("/error.jsp").forward(request, response);
         } else if (action.equals("fill") || action.equals("fillSimple") || action.equals("fillHTML")) {
 
             // Get values of valid parameters
@@ -78,18 +104,18 @@ public class fillTemplate extends HttpServlet {
                     value = request.getParameter(ConfigTemplate.getValidPlaceholders()[i].toUpperCase()); // try Upper Case also
                 }
                 if (value != null) {
-                    names.add( ConfigTemplate.getValidPlaceholders()[i] );
-                    values.add( value );
+                    names.add(ConfigTemplate.getValidPlaceholders()[i]);
+                    values.add(value);
                 }
             }
             String[] placeholders = new String[names.size()];
             String[] pValues = new String[names.size()];
-            for (int i=0;i<names.size();i++){
+            for (int i = 0; i < names.size(); i++) {
                 placeholders[i] = names.get(i);
                 pValues[i] = values.get(i);
             }
-            
-            
+
+
 
 
             if (action.equals("fillSimple") || action.equals("fillHTML")) {
@@ -99,17 +125,24 @@ public class fillTemplate extends HttpServlet {
                 try {
                     if (action.equals("fillHTML")) {
                         // replace \n with <br> so it shows up in browser
-                        out.print(buildPopulatedTemplateString(placeholders, pValues).replaceAll("\n","<br>"));
+                        StatNumFillHTMLCalls++;
+                        StatNumFillHTMLParams += NumberOfParams;
+                        out.print(buildPopulatedTemplateString(placeholders, pValues).replaceAll("\n", "<br>"));
                     } else {
                         // Simple
+                        StatNumFillSimpleCalls++;
+                        StatNumFillSimpleParams += NumberOfParams;
                         out.print(buildPopulatedTemplateString(placeholders, pValues));
                     }
                 } finally {
                     out.close();
                 }
             } else {
+                StatNumFillCalls++;
+                StatNumFillParams += NumberOfParams;
                 // Respond with parameters + filled template wrapped in xml
                 response.setContentType("text/xml");
+                //response.setHeader("Cache-Control", "no-cache"); // Not sure why we need this
                 PrintWriter out = response.getWriter();
                 try {
                     out.print("<wrapper>");
@@ -123,6 +156,14 @@ public class fillTemplate extends HttpServlet {
             }
 
 
+        } else if (action.equals("stats")) {
+            response.setContentType("text/html;charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            try {
+                out.print(getStats().replaceAll("\n", "<br>"));
+            } finally {
+                out.close();
+            }
         } else {
             context.getRequestDispatcher("/error.jsp").forward(request, response);
         }
@@ -141,5 +182,47 @@ public class fillTemplate extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         this.context = config.getServletContext();
     }
-    
+
+    /**
+     * Returns metrics information of usage so far, fun with numbers!
+     * @return 
+     */
+    private String getStats() {
+        String stats = "";
+        System.err.println("soooooo");
+        
+        double totalCalls = StatNumNullCalls+StatNumFillCalls+
+                StatNumFillHTMLCalls+StatNumFillSimpleCalls; // Total # of calls to /fillTemplate
+        double totalParams = StatNumNullParams+StatNumFillParams+
+                StatNumFillHTMLParams+StatNumFillSimpleParams; // Total # Params passed
+        
+        
+        double avgNull = 0;
+        double avgFill = 0;
+        double avgHTML = 0;
+        double avgSimple = 0;
+        double avgTotal = 0;
+        
+        if (StatNumNullCalls>0)
+            avgNull = (double)StatNumNullParams/StatNumNullCalls;
+        if (StatNumFillCalls>0)
+            avgFill = (double)StatNumFillParams/StatNumFillCalls;
+        if (StatNumFillHTMLCalls>0)
+            avgHTML = (double)StatNumFillHTMLParams/StatNumFillHTMLCalls;
+        if (StatNumFillSimpleCalls>0)
+            avgSimple = (double)StatNumFillSimpleParams/StatNumFillSimpleCalls;
+        if (totalCalls>0)
+            avgTotal = (double)totalParams/totalCalls;
+            
+            
+        
+        stats += "Name(action) ,        # of Calls        , Average # of Parameters passed (including the action) <br>";
+        stats += "none         , " + StatNumNullCalls + " , "+avgNull+"<br>";
+        stats += "fill         , " + StatNumFillCalls + " , "+avgFill+"<br>";
+        stats += "fillHTML     , " + StatNumFillHTMLCalls + " , "+avgHTML+"<br>";
+        stats += "fillSimple   , " + StatNumFillSimpleCalls + " , "+avgSimple+"<br>";
+        stats += "Total        , " + totalCalls + " , "+avgTotal+"<br>";
+
+        return stats;
+    }
 }

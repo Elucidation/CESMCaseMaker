@@ -145,16 +145,6 @@ public class AutoCompleteServlet extends HttpServlet {
             //nothing to show
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
-
-        // Put this separate for now
-        /*
-        if (action.equals("fillEnvConf")) {
-            Iterator it = envCfgData.getSet().iterator();
-            while (it.hasNext()) {
-                String id = (String) it.next();
-                EnvConfigOption option = (EnvConfigOption) envConfigOptions.get(id);
-            }
-        }*/
     }
 
     private String getEnvConfigOptionsXML() {
@@ -230,7 +220,7 @@ public class AutoCompleteServlet extends HttpServlet {
         if (option.getName().equalsIgnoreCase("RUN_STARTDATE")
                 && template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase("Branched")) {
             return false;
-        } 
+        }
         // RUN_REFDATE&RUN_REFCASE ignored for RUN_TYPE == Startup (default)
         if ((option.getName().equalsIgnoreCase("RUN_REFDATE") || option.getName().equalsIgnoreCase("RUN_REFCASE"))
                 && (template.getEnvConfigValue("RUN_TYPE").equalsIgnoreCase("startup")
@@ -238,7 +228,7 @@ public class AutoCompleteServlet extends HttpServlet {
             return false;
         }
         // RUN_REFCASE ignored for RUN_TYPE == Startup (default)
-        
+
         return true;
     }
 }

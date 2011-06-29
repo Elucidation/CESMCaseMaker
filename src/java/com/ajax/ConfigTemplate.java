@@ -51,17 +51,21 @@ class ConfigTemplate {
         placeholders = names;
         setPlaceholdersToUppercase();
         replacements = values;
+        keepSafe();
     }
     void setPlaceholdersToUppercase() {
         for (int i=0;i<placeholders.length;i++) {placeholders[i] = placeholders[i].toUpperCase();} // Uppercase all placeholders
     }
-    
-    void passReplacements(String name, String value) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    void keepSafe() {
+        if (placeholders == null) {
+            placeholders = new String[0];
+            replacements = new String[0];
+        }
     }
 
     String get() {
         String outTemplate = template;
+        keepSafe();
         for (int i=0;i<placeholders.length;i++) {
             //System.err.println(placeholders[i]);
             // if it's an env_config.xml change, do special replace to keep location

@@ -1,20 +1,6 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
-//var req;
 var isIE;
 
-var completeField;
-var completeTable;
-var autoRow;
-
-function init() {
-    // Called every time page is loaded supposedly (boady onload in index.jsp)
-    //completeField = document.getElementById("complete-field");
-    
+function init() {    
     caseField = document.getElementById("case-field");
     resField = document.getElementById("res-field");
     compsetField = document.getElementById("compset-field");
@@ -23,37 +9,19 @@ function init() {
     
     envConfigTable = document.getElementById("envConfig-table");
     
-    //completeTable = document.getElementById("complete-table");
-    //autoRow = document.getElementById("auto-row");
-    //completeTable.style.top = getElementY(autoRow) + "px";
     templateField = document.getElementById("template-field");
     templateField.textContent = "";
     
-    doCompletion(); // So it's not empty on startup, uses whatever values in fields'
-    doLoadOptions("full"); // Set up available options initially, clear everything
-// Async causes fun and interesting things to happen.
-// I got it, 'req' get's overwritten because they're both done in series!
-// Fixed issue by removing global req and passing callback w/ local req
+    //doCompletion();
 }
 
 function doCompletion() {
-    var url = "autocomplete?action=fill"+
+    var url = "fillTemplate?action=fill"+
     "&name="+escape(caseField.value)+
     "&res="+escape(resField.value)+
     "&compset="+escape(compsetField.value)+
     "&mach="+escape(machField.value);
     
-    //templateField.textContent = "doCompletion: " + url + "\n\n"; // not important
-    
-    // This kind of hard-coded logic needs to be moved to java, and further to SQL
-    // it will get way too complicated at this rate.
-    /*
-    if (escape(runTypeField.value) == "Branched") {
-        startdateRowField.hidden = true;
-    } else {
-        startdateRowField.hidden = false;
-        url += "&startDate="+escape(startDateField.value);
-    }*/
     var req = initRequest();
     req.open("GET",url,true);
     req.onreadystatechange = function(){
@@ -87,28 +55,13 @@ function doEnvConfAdd() {
         }
     }
     
-    //templateField.textContent = "doCompletion: " + url + "\n\n"; // not important
-    
-    // This kind of hard-coded logic needs to be moved to java, and further to SQL
-    // it will get way too complicated at this rate.
-    /*// env.conf variables
-    runTypeField = document.getElementById("runType-field");
-    startDateField = document.getElementById("startDate-field");
-    
-    optionsTable = document.getElementById("options-table");
-    startdateRowField = document.getElementById("startdateRow");
-     *
-     *if (escape(runTypeField.value) == "Branched") {
-        startdateRowField.hidden = true;
-    } else {
-        startdateRowField.hidden = false;
-    }*/
-    var req = initRequest();
+    templateField.textContent = "Dksi";
+    /*var req = initRequest();
     req.open("GET",url,true);
     req.onreadystatechange = function(){
         callback(req)
     };
-    req.send(null);
+    req.send(null);*/
 }
 
 function initRequest() {
@@ -116,39 +69,33 @@ function initRequest() {
         if (navigator.userAgent.indexOf('MSIE') != -1) {
             isIE = true;
         }
-        return new XMLHttpRequest();
+        return new XMLHttpRequest(); // Not IE then, Firefox or something
     } else if (window.ActiveXObject) {
         isIE = true;
         return new ActiveXObject("Microsoft.XMLHTTP");
     }
+    else {
+        // Do nothing
+        return null;
+    }
 }
-/*
- * readyState Value	Object Status Definition
- * 0	uninitialized
- * 1	loading
- * 2	loaded
- * 3	interactive
- * 4	complete
- */
+
 function callback(req) {
-    if (req.readyState == 4) {
-        if (req.status == 200) {
-            //templateField.textContent += " wup ";
+    if (req.readyState == 4) { // 4 = complete
+        if (req.status == 200) { 
             parseMessages(req.responseXML);
         }
     }
 }
 
+//    readableName is name shown for option
+//    name_id is the id used for reference to the text input field
+//    value is the value shown initially in the text input field
+//    default value is the value shown when mouse hovers over the readable Name
+//    description is put in title, showing up when mouse hovers over field
 function addOption(readableName, name_id, value, defaultValue, description) {
-    // readableName is name shown for option
-    // name_id is the id used for reference to the text input field
-    // value is the value shown initially in the text input field
-    // default value is the value shown when mouse hovers over the readable Name
-    // description is put in title, showing up when mouse hovers over field
     var row;
-    var cell;
-    //var value = "test";
-
+    
     if (isIE) {
         envConfigTable.style.display = 'block';
         row = envConfigTable.insertRow(envconfigTable.rows.length);
@@ -163,7 +110,6 @@ function addOption(readableName, name_id, value, defaultValue, description) {
         row.appendChild(valuecell);
         envConfigTable.appendChild(row);
     }
-    //var nameElement = document.createTextNode(readableName);
     var nameElement = document.createElement("normalText");
     nameElement.setAttribute("title", "xml option: "+ name_id +", default: "+defaultValue);
     nameElement.textContent = readableName;
@@ -176,34 +122,6 @@ function addOption(readableName, name_id, value, defaultValue, description) {
     formElement.setAttribute("onkeyup","doEnvConfAdd();");
     formElement.setAttribute("title",description);
     valuecell.appendChild(formElement);
-        
-            
-            
-/*<tr> <!-- Row 5 -->
-                                        <td>Type of run:</td>
-                                        <td>
-                                            <select name="runType" 
-                                                    id="runType-field"
-                                                    onchange="doEnvConfAdd();">
-                                                <option>Startup</option>
-                                                <option>Branched</option>
-                                                <option>Hybrid</option>
-                                            </select>
-
-                                        </td>
-                                    </tr>
-
-                                    <tr id="startdateRow"> <!-- Row 6 -->
-                                        <td>Start date:</td>
-                                        <td>
-                                            <input type="text" 
-                                                   name="start date" 
-                                                   id="startDate-field"
-                                                   value="0001-01-01"
-                                                   onkeyup="doEnvConfAdd();"/>
-
-                                        </td>
-                                    </tr> */
 }
 
 function clearTable() {
@@ -218,33 +136,16 @@ function clearTable() {
 function parseMessages(responseXML) {
     if (responseXML == null) {
         templateField.textContent += "--Null Response--\n";
-        return false;
-    } else if (responseXML.getElementsByTagName("wrap").length != 0) {
-        // wrapper containing both create_newcase & env_conf, so do both
-        updateTemplateField(responseXML.getElementsByTagName("create_newcase")[0]);
-        
-        // Only if there are changes (# of fields)
-        // Not a very accurate check, if two changes cancel each other no change will show up!
-        if (envConfigTable.getElementsByTagName("tr").length != responseXML.getElementsByTagName("env_conf")[0].childNodes.length) {
-            addOptionFields(responseXML.getElementsByTagName("env_conf")[0]);
-        }
-        //templateField.textContent = "Hmmmmmm....\n";
-    } else if (responseXML.getElementsByTagName("create_newcase").length != 0){
-        updateTemplateField(responseXML.getElementsByTagName("create_newcase")[0]);
-    } else if (responseXML.getElementsByTagName("env_conf").length != 0){
-        addOptionFields(responseXML.getElementsByTagName("env_conf")[0]);
-    //templateField.textContent += "derp";
+    } else if (responseXML.getElementsByTagName("wrapper").length != 0) {
+        updateTemplateField(responseXML.getElementsByTagName("template")[0]); 
     } else {
         templateField.textContent = "--Bad Response--\n";
-        return false;
     }
-    
 }
 function updateTemplateField(caseElement) {
     templateField.textContent = caseElement.childNodes[0].nodeValue;
 }
 function addOptionFields(optionsEC) {
-    //var optionsEC = ; // Environment Config Options
     clearTable(); // Start fresh
     if (optionsEC.childNodes.length > 0) {
         for (loop = 0; loop < optionsEC.childNodes.length; loop++) {
@@ -259,7 +160,6 @@ function addOptionFields(optionsEC) {
                  *  <description></description>
                  *</envConfigOption>
                  */
-            //var id = option.getElementsByTagName("id")[0].childNodes[0].nodeValue;
             var name = option.getElementsByTagName("name")[0].childNodes[0].nodeValue;
             var value = option.getElementsByTagName("value")[0].childNodes[0].nodeValue;
             var defaultValue = option.getElementsByTagName("defaultValue")[0].childNodes[0].nodeValue;
