@@ -6,8 +6,6 @@
 # located in the CESM_ROOT/scripts/CASENAME directory.
 # It then configures, builds and runs the case.
 
-ENVCASE
-
 echo "Creating new case..."
 scripts/create_newcase -case CASENAME -res RESOLUTION -compset COMPSET -mach MACHINE
 

@@ -34,7 +34,7 @@ class ConfigTemplate {
     // Used to see if passed placeholder is an environment xml variable
     
     
-    private static final String[] ENV_LOCATION_PLACEHOLDERS = {"ENVCASE","ENVCONF","ENVBUILD","ENVRUN"}; // The 4 places in cesm configuration where editing environment files goes
+    private static final String[] ENV_LOCATION_PLACEHOLDERS = {"ENVCONF","ENVBUILD","ENVRUN"}; // The 3 places in cesm configuration where editing environment files goes
 
     public ConfigTemplate() {
         try {
@@ -71,12 +71,24 @@ class ConfigTemplate {
             // if it's an env_config.xml change, do special replace to keep location
             if (envConfigTable.getEnvConfigOptions().containsKey(placeholders[i].toUpperCase())) {
                 // Only Env Config works atm but any env xml can be implemented
+                outTemplate = outTemplate.replaceFirst(ENV_LOCATION_PLACEHOLDERS[0], 
+                        ENV_LOCATION_PLACEHOLDERS[0]+"\n"
+                        +xmlChange("env_conf.xml",placeholders[i].toUpperCase(), replacements[i]) // add xmlchange
+                        ); 
+            } else if (envConfigTable.getEnvBuildOptions().containsKey(placeholders[i].toUpperCase())) {
+                // Only Env Config works atm but any env xml can be implemented
                 outTemplate = outTemplate.replaceFirst(ENV_LOCATION_PLACEHOLDERS[1], 
                         ENV_LOCATION_PLACEHOLDERS[1]+"\n"
-                        +xmlChange("env_conf.xml",placeholders[i], replacements[i]) // add xmlchange
+                        +xmlChange("env_build.xml",placeholders[i].toUpperCase(), replacements[i]) // add xmlchange
+                        ); 
+            } else if (envConfigTable.getEnvRunOptions().containsKey(placeholders[i].toUpperCase())) {
+                // Only Env Config works atm but any env xml can be implemented
+                outTemplate = outTemplate.replaceFirst(ENV_LOCATION_PLACEHOLDERS[2], 
+                        ENV_LOCATION_PLACEHOLDERS[2]+"\n"
+                        +xmlChange("env_run.xml",placeholders[i].toUpperCase(), replacements[i]) // add xmlchange
                         ); 
             } else {
-                outTemplate = outTemplate.replaceAll(placeholders[i], replacements[i]);
+                outTemplate = outTemplate.replaceAll(placeholders[i].toUpperCase(), replacements[i]);
             }
         }
         
@@ -84,6 +96,7 @@ class ConfigTemplate {
         // Now remove all env_config location placeholders
         for (String environmentLocationPlaceholder : ENV_LOCATION_PLACEHOLDERS) {
             outTemplate = outTemplate.replaceAll(environmentLocationPlaceholder+"\n", "");
+            outTemplate = outTemplate.replaceAll(environmentLocationPlaceholder, "");
         }
         
         return outTemplate;

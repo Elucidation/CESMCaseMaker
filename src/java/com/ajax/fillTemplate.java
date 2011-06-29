@@ -104,15 +104,15 @@ public class fillTemplate extends HttpServlet {
             ArrayList<String> names = new <String>ArrayList();
             ArrayList<String> values = new <String>ArrayList();
             for (int i = 0; i < ConfigTemplate.getValidPlaceholders().length; i++) {
-                String value = request.getParameter(ConfigTemplate.getValidPlaceholders()[i].toLowerCase()); // null if doesn't exist
+                String value = request.getParameter(ConfigTemplate.getValidPlaceholders()[i].toLowerCase()); // null if doesn't exist or not lowercase...
                 if (value == null) {
-                    value = request.getParameter(ConfigTemplate.getValidPlaceholders()[i].toUpperCase()); // try Upper Case also
+                    value = request.getParameter(ConfigTemplate.getValidPlaceholders()[i].toUpperCase()); // try Upper Case also, mixed cases won't work
                 }
                 if (value != null) {
                     names.add(ConfigTemplate.getValidPlaceholders()[i]);
                     values.add(value);
                 }
-            }
+            } // Could actually do this the other way around ,but that invites people to send in too many parameters?
             String[] placeholders = new String[names.size()];
             String[] pValues = new String[names.size()];
             for (int i = 0; i < names.size(); i++) {
