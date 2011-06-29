@@ -17,10 +17,10 @@ function init() {
 
 function doCompletion() {
     var url = "fillTemplate?action=fill"+
-    "&name="+escape(caseField.value)+
-    "&res="+escape(resField.value)+
+    "&casename="+escape(caseField.value)+
+    "&resolution="+escape(resField.value)+
     "&compset="+escape(compsetField.value)+
-    "&mach="+escape(machField.value);
+    "&machine="+escape(machField.value);
     
     var req = initRequest();
     req.open("GET",url,true);

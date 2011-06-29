@@ -14,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.tomcat.jni.Time;
 
 /**
  * Requires all parameters passed to be lower case, and directly what are in the template
@@ -23,14 +24,16 @@ import javax.servlet.http.HttpServletResponse;
 public class fillTemplate extends HttpServlet {
     
     // Just to keep track of statistics for fun and giggles, as well how to optimize, but mostly fun and giggles.
-    private double StatNumNullCalls = 0;
-    private double StatNumNullParams = 0;
-    private double StatNumFillCalls = 0;
-    private double StatNumFillParams = 0;
-    private double StatNumFillHTMLCalls = 0;
-    private double StatNumFillHTMLParams = 0;
-    private double StatNumFillSimpleCalls = 0;
-    private double StatNumFillSimpleParams = 0;
+    private long StatNumNullCalls = 0;
+    private long StatNumNullParams = 0;
+    private long StatNumFillCalls = 0;
+    private long StatNumFillParams = 0;
+    private long StatNumFillHTMLCalls = 0;
+    private long StatNumFillHTMLParams = 0;
+    private long StatNumFillSimpleCalls = 0;
+    private long StatNumFillSimpleParams = 0;
+    private long StatTotalTimeWorking = 0;
+    private long StatTotalCalls = 0;
     
     private ServletContext context;
     ConfigTemplate template = new ConfigTemplate(); // template helps determine valid parameters, and of course, the output.
@@ -77,6 +80,8 @@ public class fillTemplate extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        StatTotalCalls++;
+        long startTime = System.currentTimeMillis();
         String action = request.getParameter("action");
         int NumberOfParams = request.getParameterMap().size();
         
@@ -167,6 +172,8 @@ public class fillTemplate extends HttpServlet {
         } else {
             context.getRequestDispatcher("/error.jsp").forward(request, response);
         }
+        
+        StatTotalTimeWorking += (System.currentTimeMillis() - startTime);
     }
 
     /** 
@@ -222,6 +229,10 @@ public class fillTemplate extends HttpServlet {
         stats += "fillHTML     , " + StatNumFillHTMLCalls + " , "+avgHTML+"<br>";
         stats += "fillSimple   , " + StatNumFillSimpleCalls + " , "+avgSimple+"<br>";
         stats += "Total        , " + totalCalls + " , "+avgTotal+"<br>";
+        stats += "<br>";
+        stats += "Total Calls of any kind: "+StatTotalCalls+"<br>";
+        stats += "Total time working: "+StatTotalTimeWorking/1000+" seconds<br>";
+        stats += "Average Response time: "+(double)StatTotalTimeWorking/StatTotalCalls+" milliseconds per call<br>";
 
         return stats;
     }
