@@ -6,6 +6,7 @@ nbproject/private/
 
 #netbeans ignore distribution as it can be built from source
 dist/
+build/
 
 ## generic files to ignore
 *~
