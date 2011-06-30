@@ -36,6 +36,9 @@ table {
     padding: 1px;
     background-color: #eff0ef;
 }
+tbody {
+    vertical-align: top;
+}
 
 td {
     padding: 5px;
@@ -50,27 +53,7 @@ a:hover {
     text-decoration: underline;
 }
 
-.popupBox {
-    position: absolute;
-    top: 170px;
-    left: 140px;
-}
 
-.popupCell {
-    background-color: #fffafa;
-}
-
-.popupCell:hover {
-    background-color: #f5ebe9;
-}
-
-.popupItem {
-    color: #333;
-    text-decoration: none;
-    font-size: 0.8em;
-}
-
-/* By Sam */
 code {
 
     font-family: monospace;
@@ -91,5 +74,44 @@ normalText {
     
 }
 normalText:hover {
-    text-decoration: underline;
+    border-bottom-style: dotted;
+    border-bottom-color: #ffcc33;
+    color: #ab6f00;
+}
+
+/* Dim switch */
+doop{
+    position: absolute;
+    top: 0%;
+    z-index: 10;
+    left: 0%;
+    width: 100%;
+    background-color: #51582a;
+    height: 200%;
+    opacity: 0.6;
+    display: none;
+}
+
+.popupBox {
+    position: absolute;
+    top: 400px;
+    z-index: 12;
+    border-right-style: dashed;
+    border-left-style: dashed;
+    border-bottom-style: dashed;
+    border-top-style: dashed;
+    border-right-color: #732d2d;
+    border-left-color: #732d2d;
+    border-bottom-color: #732d2d;
+    border-top-color: #732d2d;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-top-width: 1px;
+    width: 350px;
+    left: 400px;
 }

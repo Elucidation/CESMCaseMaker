@@ -96,17 +96,6 @@
                                             <strong><a href="http://www.cesm.ucar.edu/models/cesm1.0/cesm/cesm_doc/a4288.html">Environment Config XML Options</a></strong>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td colSpan="2">
-                                            <table id="envConfig-table"
-                                                   border="0" 
-                                                   cellpadding="0" 
-                                                   id="options-table"
-                                                   width="350px"></table>
-                                            <!--<thead><tr><td colspan="2"><strong>Environment Configuration XML Options</strong></td></tr></thead> -->
-                                        </td>
-                                    </tr>
-
                                 </tbody>
                             </table>
 
@@ -172,5 +161,31 @@
     <p>Source code freely available at <a href="https://github.com/Elucidation/CESMCaseMaker">https://github.com/Elucidation/CESMCaseMaker</a></p>
     <!--<p>Diagram of CESM Data Flow during Configuration</p>-->
 
+    <!-- Environmental XML Options table pop-up stuff lives peacefully here -->
+
+    <table id="envConfig-table"
+           class="popupBox">
+        <tr>
+            <td>
+                Bleeep
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Bleeep
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Bleeep
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Bleeep
+            </td>
+        </tr>
+        <doop id="dimSwitch">bloop</doop>
+    </table>
 </body>
 </html>
