@@ -114,12 +114,14 @@ public class fillTemplate extends HttpServlet {
             }
             String typeOfEnvOption = request.getParameter("type");
             if (typeOfEnvOption == null || typeOfEnvOption.isEmpty()) {
-                typeOfEnvOption = null; // pass the buck on
+                typeOfEnvOption = ""; // pass the buck on
             }
             String tableXML = template.getReducedXMLList(currentValue,typeOfEnvOption);
             // Respond with parameters + a reduced popup table in xml
             response.setContentType("text/xml");
-            response.setHeader("Cache-Control", "no-cache"); // Keeps browsers from cacheing web-page (not updating to new values bad)
+            //response.setHeader("Cache-Control", "no-cache");  // Boo this thing was causing all the async problems, goodbye for now
+            // Keeps browsers from cacheing web-page (not updating to new values bad) 
+            
             PrintWriter out = response.getWriter();
             try {
                 out.print("<wrapper>");
@@ -134,8 +136,9 @@ public class fillTemplate extends HttpServlet {
         } else if (action.equals("fill") || action.equals("fillSimple") || action.equals("fillHTML")) {
 
             // Get values of valid parameters
-            ArrayList<String> names = new <String>ArrayList();
-            ArrayList<String> values = new <String>ArrayList();
+            ArrayList names = new ArrayList();
+            ArrayList values = new ArrayList();
+            //ArrayList<String> values = new <String>ArrayList(); // Why does this cause problems...argh
             for (int i = 0; i < ConfigTemplate.getValidPlaceholders().length; i++) {
                 String value = request.getParameter(ConfigTemplate.getValidPlaceholders()[i].toLowerCase()); // null if doesn't exist or not lowercase...
                 if (value == null) {
@@ -149,8 +152,8 @@ public class fillTemplate extends HttpServlet {
             String[] placeholders = new String[names.size()];
             String[] pValues = new String[names.size()];
             for (int i = 0; i < names.size(); i++) {
-                placeholders[i] = names.get(i);
-                pValues[i] = values.get(i);
+                placeholders[i] = (String)names.get(i);
+                pValues[i] = (String)values.get(i);
             }
 
 
@@ -159,7 +162,7 @@ public class fillTemplate extends HttpServlet {
             if (action.equals("fillSimple") || action.equals("fillHTML")) {
                 // Respond a populated template as a string
                 response.setContentType("text/html;charset=UTF-8");
-                response.setHeader("Cache-Control", "no-cache"); // Keeps browsers from cacheing web-page (not updating to new values bad)
+                //response.setHeader("Cache-Control", "no-cache"); // Keeps browsers from cacheing web-page (not updating to new values bad)
                 PrintWriter out = response.getWriter();
                 try {
                     if (action.equals("fillHTML")) {
@@ -181,7 +184,7 @@ public class fillTemplate extends HttpServlet {
                 StatNumFillParams += NumberOfParams;
                 // Respond with parameters + filled template wrapped in xml
                 response.setContentType("text/xml");
-                response.setHeader("Cache-Control", "no-cache"); // Keeps browsers from cacheing web-page (not updating to new values bad)
+                //response.setHeader("Cache-Control", "no-cache"); // Keeps browsers from cacheing web-page (not updating to new values bad)
                 PrintWriter out = response.getWriter();
                 try {
                     out.print("<wrapper>");
