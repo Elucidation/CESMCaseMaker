@@ -35,6 +35,8 @@ h2 {
 table {
     padding: 1px;
     background-color: #eff0ef;
+    -moz-border-radius: 5px;
+    border-radius: 10px;
 }
 tbody {
     vertical-align: top;
@@ -92,26 +94,53 @@ doop{
     display: none;
 }
 
-.popupBox {
+table.popupBox {
     position: absolute;
-    top: 400px;
+    top: 200px;
     z-index: 12;
-    border-right-style: dashed;
-    border-left-style: dashed;
-    border-bottom-style: dashed;
-    border-top-style: dashed;
     border-right-color: #732d2d;
     border-left-color: #732d2d;
     border-bottom-color: #732d2d;
     border-top-color: #732d2d;
-    padding-right: 10px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    padding-top: 10px;
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-bottom: 5px;
+    padding-top: 5px;
     border-right-width: 1px;
     border-left-width: 1px;
     border-bottom-width: 1px;
     border-top-width: 1px;
-    width: 350px;
-    left: 400px;
+    border-right-style: none;
+    border-left-style: none;
+    border-bottom-style: none;
+    border-top-style: none;
+    background-color: #cccccc;
+    right: 100px;
+    width: 600px;
+}
+
+td.popupBox {
+    padding: 5px;
+    background-color: #f9f3df;
+    clip: rect(0px, 0px, 0px, 0px);
+    padding-right: 2px;
+    padding-left: 2px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    border-right-style: outset;
+    border-left-style: outset;
+    border-bottom-style: outset;
+    border-top-style: outset;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-top-width: 1px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+
+
+input:focus {
+    background-color: #fbf5c0;
 }

@@ -112,7 +112,11 @@ public class fillTemplate extends HttpServlet {
             if (currentValue == null || currentValue.isEmpty())  {
                 currentValue = "";
             }
-            String tableXML = template.getReducedXMLList(currentValue,"config");
+            String typeOfEnvOption = request.getParameter("type");
+            if (typeOfEnvOption == null || typeOfEnvOption.isEmpty()) {
+                typeOfEnvOption = null; // pass the buck on
+            }
+            String tableXML = template.getReducedXMLList(currentValue,typeOfEnvOption);
             // Respond with parameters + a reduced popup table in xml
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache"); // Keeps browsers from cacheing web-page (not updating to new values bad)
@@ -226,7 +230,6 @@ public class fillTemplate extends HttpServlet {
      */
     private String getStats() {
         String stats = "";
-        System.err.println("soooooo");
 
         double totalCalls = StatNumNullCalls + StatNumFillCalls
                 + StatNumFillHTMLCalls + StatNumFillSimpleCalls; // Total # of calls to /fillTemplate

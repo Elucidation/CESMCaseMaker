@@ -152,17 +152,20 @@ class ConfigTemplate {
     String getReducedXMLList(String currentValue, String option) {
         String out = "";
         HashMap options;
+        Set keys;
         if (option.contentEquals("config")) {
             options = envConfigTable.getEnvConfigOptions();
+            keys = envConfigTable.getEnvConfigOptionKeys();
         } else if (option.contentEquals("build")) {
             options = envConfigTable.getEnvBuildOptions();
+            keys = envConfigTable.getEnvBuildOptionKeys();
         } else if (option.contentEquals("run")) {
             options = envConfigTable.getEnvRunOptions();
+            keys = envConfigTable.getEnvRunOptionKeys();
         } else {
             // Silly wank, return nothing
             return null;
         }
-        Set keys = options.keySet();
         Iterator it = keys.iterator();
         while (it.hasNext()) {
             String optionId = (String) it.next();

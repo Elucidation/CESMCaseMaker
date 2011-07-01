@@ -1,5 +1,4 @@
 var isIE;
-
 function init() {    
     caseField = document.getElementById("case-field");
     resField = document.getElementById("res-field");
@@ -8,6 +7,9 @@ function init() {
     
     
     envOptionTable = document.getElementById("envOption-table");
+    envConfigField = document.getElementById("envConfig-field");
+    envBuildField = document.getElementById("envBuild-field");
+    envRunField = document.getElementById("envRun-field");
     
     templateField = document.getElementById("template-field");
     templateField.textContent = "";
@@ -16,11 +18,30 @@ function init() {
 }
 
 function doCompletion() {
+    clearTable();
     var url = "fillTemplate?action=fill"+
     "&casename="+escape(caseField.value)+
     "&resolution="+escape(resField.value)+
     "&compset="+escape(compsetField.value)+
     "&machine="+escape(machField.value);
+    
+    var req = initRequest();
+    req.open("GET",url,true);
+    req.onreadystatechange = function(){
+        callback(req)
+    };
+    req.send(null);
+}
+/* depending on id it will update a popup table with those environment options*/
+function doAutoComplete(id) {
+    var url = "fillTemplate?action=complete";
+    if (id == "envConfig-field") {
+        url += "&type=config&currentValue="+escape(envConfigField.value);
+    } else if (id == "envBuild-field") {
+        url += "&type=build&currentValue="+escape(envBuildField.value);
+    } else if (id == "envRun-field") {
+        url += "&type=run&currentValue="+escape(envRunField.value);
+    }
     
     var req = initRequest();
     req.open("GET",url,true);
@@ -91,8 +112,8 @@ function addOption(readableName, name_id, value, defaultValue, description) {
 }
 
 function clearTable() {
+    envOptionTable.style.display = 'none';
     if (envOptionTable.getElementsByTagName("tr").length > 0) {
-        envOptionTable.style.display = 'none';
         for (loop = envOptionTable.childNodes.length - 1; loop >= 0 ; loop--) {
             envOptionTable.removeChild(envOptionTable.childNodes[loop]);
         }
@@ -115,17 +136,79 @@ function parseMessages(responseXML) {
 }
 
 function doPopupTable(xmlTable) {
-    if (xmlTable.childNodes.length > 0) {
-        envOptionTable.setAttribute("bordercolor", "blue");
-        envOptionTable.setAttribute("border", "4");
+    //templateField.textContent = "booop: " + xmlTable[0].childNodes.length;
+    clearTable(); // Might remove this if it's a waste
+    //templateField.textContent = "popup table length: " + xmlTable[0].childNodes.length + "\n";
+    addPopUpRow("Name","Default Value","Description","ID");
+    //addHeaderRow() To be implemented
+    if (xmlTable[0].childNodes.length > 0) {
+        // There are values, so lets make a table!
+        for (loop = 0; loop < xmlTable[0].childNodes.length; loop++ ) {
+            //templateField.textContent += "#"+loop+" of "+xmlTable[0].childNodes.length + " | ";
+            var envOption = xmlTable[0].childNodes[loop];
+            var id = envOption.getElementsByTagName("id")[0].childNodes[0].nodeValue;
+            //var longname = escape(envOption.getElementsByTagName("name")[0].childNodes[0].nodeValue); // pretty crappy longname atm, skipping
+            var defaultValue = envOption.getElementsByTagName("default")[0].childNodes[0];
+            if (defaultValue == undefined) {
+                defaultValue = "";
+            } else {
+                defaultValue = defaultValue.nodeValue;
+            }
+            //templateField.textContent += " " + defaultValue + "\n";
+            var description = envOption.getElementsByTagName("description")[0].childNodes[0];
+            if (description == undefined) {
+                description = "";
+            } else {
+                description = description.nodeValue;
+            }
+            
+            addPopUpRow(id, defaultValue, description, id); // not using longname, using id instead
+        }
     }
+}
+
+function addPopUpRow(longname, defaultValue, description, id) {
+    var row;
+    var cellId;
+    var cellDefault;
+    var cellDescription;
+    var linkElement;
+    if (isIE) {
+        envOptionTable.style.display = 'block';
+        row = envOptionTable.insertRow(envOptionTable.rows.length);
+        cellId = row.insertCell(0);
+        cellDefault = row.insertCell(1);
+        cellDescription = row.insertCell(2);
+    } else {
+        envOptionTable.style.display = 'table';
+        row = document.createElement("tr");
+        cellId = document.createElement("td");
+        cellDefault = document.createElement("td");
+        cellDescription = document.createElement("td");
+        row.appendChild(cellId);
+        row.appendChild(cellDefault);
+        row.appendChild(cellDescription);
+        envOptionTable.appendChild(row);
+    }
+    cellId.className = "popupBox";
+    cellDefault.className = "popupBox";
+    cellDescription.className = "popupBox";
+
+    linkElement = document.createElement("a");
+    linkElement.className = "popupItem";
+    linkElement.setAttribute("href", "NotImplementedYet &id=" + id);
+    linkElement.setAttribute("tabindex", "5");
+    linkElement.appendChild(document.createTextNode(longname));
+    cellId.appendChild(linkElement);
+    cellDefault.appendChild(document.createTextNode(defaultValue))
+    cellDescription.appendChild(document.createTextNode(description))
 }
 
 function updateTemplateField(caseElement) {
     templateField.textContent = caseElement.childNodes[0].nodeValue;
 }
 function addOptionFields(optionsEC) {
-    clearTable(); // Start fresh
+    //clearTable(); // Start fresh
     if (optionsEC.childNodes.length > 0) {
         for (loop = 0; loop < optionsEC.childNodes.length; loop++) {
             var option = optionsEC.childNodes[loop];

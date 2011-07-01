@@ -46,6 +46,16 @@ public class EnvConfigData {
         // Get keys of all the sets
         return (String[]) setAll.toArray(new String[0]);
     }
+    
+    Set getEnvConfigOptionKeys() {
+        return setConfig;
+    }
+    Set getEnvBuildOptionKeys() {
+        return setBuild;
+    }
+    Set getEnvRunOptionKeys() {
+        return setRun;
+    }
 
     public EnvConfigData() {
         // This entire file is just a placeholder till SQL DB is implemented.
@@ -136,4 +146,5 @@ public class EnvConfigData {
         }
         return out.toString().trim();
     }
+
 }

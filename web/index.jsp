@@ -106,8 +106,7 @@
                                                    size="20"
                                                    value=""
                                                    id="envConfig-field"
-                                                   onkeyup="closePopup();"
-                                                   onfocus="doAutoComplete('config');"
+                                                   onkeyup="doAutoComplete(this.id);"
                                                    tabindex="20"
                                                    title="Insert Environment Configuration Option"/>
                                         </td>
@@ -123,7 +122,7 @@
                                                    size="20"
                                                    value=""
                                                    id="envBuild-field"
-                                                   onkeyup="doAutoComplete('build');"
+                                                   onkeyup="doAutoComplete(this.id);"
                                                    tabindex="20"
                                                    title="Insert Environment Build Option"/>
                                         </td>
@@ -139,7 +138,7 @@
                                                    size="20"
                                                    value=""
                                                    id="envRun-field"
-                                                   onkeyup="doAutoComplete('run');"
+                                                   onkeyup="doAutoComplete(this.id);"
                                                    tabindex="20"
                                                    title="Insert Environment Run Option"/>
                                         </td>
