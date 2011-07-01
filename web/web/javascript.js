@@ -7,12 +7,12 @@ function init() {
     machField = document.getElementById("machine-field");
     
     
-    envConfigTable = document.getElementById("envConfig-table");
+    envOptionTable = document.getElementById("envOption-table");
     
     templateField = document.getElementById("template-field");
     templateField.textContent = "";
     
-    //doCompletion();
+    doCompletion();
 }
 
 function doCompletion() {
@@ -28,40 +28,6 @@ function doCompletion() {
         callback(req)
     };
     req.send(null);
-}
-
-function doLoadOptions(level) {
-    // level can be 'full' or null
-    var url = "autocomplete?action=loadOptionsEnvConf&level=";
-    if (level) {
-        url += level;
-    }
-    var req = initRequest();
-    req.open("GET",url,true);
-    req.onreadystatechange = function(){
-        callback(req)
-    };
-    req.send(null);
-}
-
-function doEnvConfAdd() {
-    var url = "autocomplete?action=fillEnvConf";
-    
-    if (envConfigTable.getElementsByTagName("tr").length > 0) {
-        for (loop = 0; loop < envConfigTable.childNodes.length; loop++) {
-            var field = envConfigTable.childNodes[loop];
-            url += "&"+ field.childNodes[1].childNodes[0].getAttribute("id")
-            +"=" + escape(field.childNodes[1].childNodes[0].value);
-        }
-    }
-    
-    templateField.textContent = "Dksi";
-    /*var req = initRequest();
-    req.open("GET",url,true);
-    req.onreadystatechange = function(){
-        callback(req)
-    };
-    req.send(null);*/
 }
 
 function initRequest() {
@@ -125,10 +91,10 @@ function addOption(readableName, name_id, value, defaultValue, description) {
 }
 
 function clearTable() {
-    if (envConfigTable.getElementsByTagName("tr").length > 0) {
-        envConfigTable.style.display = 'none';
-        for (loop = envConfigTable.childNodes.length - 1; loop >= 0 ; loop--) {
-            envConfigTable.removeChild(envConfigTable.childNodes[loop]);
+    if (envOptionTable.getElementsByTagName("tr").length > 0) {
+        envOptionTable.style.display = 'none';
+        for (loop = envOptionTable.childNodes.length - 1; loop >= 0 ; loop--) {
+            envOptionTable.removeChild(envOptionTable.childNodes[loop]);
         }
     }
 }
@@ -137,11 +103,24 @@ function parseMessages(responseXML) {
     if (responseXML == null) {
         templateField.textContent += "--Null Response--\n";
     } else if (responseXML.getElementsByTagName("wrapper").length != 0) {
-        updateTemplateField(responseXML.getElementsByTagName("template")[0]); 
+        if (responseXML.getElementsByTagName("tableXML").length != 0) {
+            // popup box stuff
+            doPopupTable(responseXML.getElementsByTagName("tableXML"));
+        } else { // Normal template update
+            updateTemplateField(responseXML.getElementsByTagName("template")[0]); 
+        }
     } else {
         templateField.textContent = "--Bad Response--\n";
     }
 }
+
+function doPopupTable(xmlTable) {
+    if (xmlTable.childNodes.length > 0) {
+        envOptionTable.setAttribute("bordercolor", "blue");
+        envOptionTable.setAttribute("border", "4");
+    }
+}
+
 function updateTemplateField(caseElement) {
     templateField.textContent = caseElement.childNodes[0].nodeValue;
 }
@@ -152,14 +131,13 @@ function addOptionFields(optionsEC) {
             var option = optionsEC.childNodes[loop];
             // Format:
             /*<envConfigOption>
-                 *  <id></id>
-                 *  <name></name>
-                 *  <value></value>
-                 *  <defaultValue></defaultValue>
-                 *  <readableName></readableName>
-                 *  <description></description>
-                 *</envConfigOption>
-                 */
+             *  <id></id>
+             *  <name></name>
+             *  <defaultValue></defaultValue>
+             *  <readableName></readableName>
+             *  <description></description>
+             *</envConfigOption>
+             */
             var name = option.getElementsByTagName("name")[0].childNodes[0].nodeValue;
             var value = option.getElementsByTagName("value")[0].childNodes[0].nodeValue;
             var defaultValue = option.getElementsByTagName("defaultValue")[0].childNodes[0].nodeValue;

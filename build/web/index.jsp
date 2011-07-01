@@ -49,6 +49,7 @@
                                                    id="case-field"
                                                    value="example"
                                                    onkeyup="doCompletion();"
+                                                   tabindex="20"
                                                    title="Chosen by User, used to name case directory as /scripts/CASENAME folder of CESM"/>
 
                                         </td>
@@ -63,6 +64,7 @@
                                                    value="f19_g16"
                                                    id="res-field"
                                                    onkeyup="doCompletion();"
+                                                   tabindex="20"
                                                    title="Shortname for supported Resolutions, A Resolution is a combination of 4 grids, Atmosphere, Land, Ice & Ocean"/>
 
                                         </td>
@@ -75,6 +77,7 @@
                                                    value="B2000_CN"
                                                    id="compset-field"
                                                    onkeyup="doCompletion();"
+                                                   tabindex="20"
                                                    title="Shortname for supported Component Sets, A Component Set consists of 5 partial models, Atmosphere, Land, Ocean, Land-Ice & Sea-Ice"/>
 
                                         </td>
@@ -87,13 +90,58 @@
                                                    value="bluefire"
                                                    id="machine-field"
                                                    onkeyup="doCompletion();"
+                                                   tabindex="20"
                                                    title="Name for supported Machines, A Machine describes the hardware protocols used to run CESM (# processors, directory information etc.)"/>
 
                                         </td>
                                     </tr>
                                     <tr>
                                         <td colSpan="2">
-                                            <strong><a href="http://www.cesm.ucar.edu/models/cesm1.0/cesm/cesm_doc/a4288.html">Environment Config XML Options</a></strong>
+                                            <strong><a href="http://www.cesm.ucar.edu/models/cesm1.0/cesm/cesm_doc/a4323.html">Environment Config XML Options</a></strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="2">
+                                            <input type="text"
+                                                   size="20"
+                                                   value=""
+                                                   id="envConfig-field"
+                                                   onkeyup="closePopup();"
+                                                   onfocus="doAutoComplete('config');"
+                                                   tabindex="20"
+                                                   title="Insert Environment Configuration Option"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="2">
+                                            <strong><a href="http://www.cesm.ucar.edu/models/cesm1.0/cesm/cesm_doc/a4856.html">Environment Build XML Options</a></strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="2">
+                                            <input type="text"
+                                                   size="20"
+                                                   value=""
+                                                   id="envBuild-field"
+                                                   onkeyup="doAutoComplete('build');"
+                                                   tabindex="20"
+                                                   title="Insert Environment Build Option"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="2">
+                                            <strong><a href="http://www.cesm.ucar.edu/models/cesm1.0/cesm/cesm_doc/a5005.html">Environment Run XML Options</a></strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="2">
+                                            <input type="text"
+                                                   size="20"
+                                                   value=""
+                                                   id="envRun-field"
+                                                   onkeyup="doAutoComplete('run');"
+                                                   tabindex="20"
+                                                   title="Insert Environment Run Option"/>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -163,7 +211,7 @@
 
     <!-- Environmental XML Options table pop-up stuff lives peacefully here -->
 
-    <table id="envConfig-table"
+    <table id="envOption-table"
            class="popupBox">
         <tr>
             <td>
