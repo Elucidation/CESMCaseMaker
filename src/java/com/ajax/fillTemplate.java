@@ -21,10 +21,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "fillTemplate", urlPatterns = {"/fillTemplate"})
 public class fillTemplate extends HttpServlet {
-    
+
     // Just to keep track of statistics for fun and giggles, as well how to optimize, but mostly fun and giggles.
     private long StatNumNullCalls = 0;
     private long StatNumNullParams = 0;
+    private long StatNumCompleteCalls = 0;
+    private long StatNumCompleteParams = 0;
     private long StatNumFillCalls = 0;
     private long StatNumFillParams = 0;
     private long StatNumFillHTMLCalls = 0;
@@ -33,7 +35,6 @@ public class fillTemplate extends HttpServlet {
     private long StatNumFillSimpleParams = 0;
     private long StatTotalTimeWorking = 0;
     private long StatTotalCalls = 0;
-    
     private ServletContext context;
     ConfigTemplate template = new ConfigTemplate(); // template helps determine valid parameters, and of course, the output.
 
@@ -83,8 +84,8 @@ public class fillTemplate extends HttpServlet {
         long startTime = System.currentTimeMillis();
         String action = request.getParameter("action");
         int NumberOfParams = request.getParameterMap().size();
-        
-        
+
+
         if (action == null) {
             StatNumNullCalls++;
             StatNumNullParams += NumberOfParams;
@@ -97,6 +98,35 @@ public class fillTemplate extends HttpServlet {
                 out.close();
             }
             //context.getRequestDispatcher("/error.jsp").forward(request, response);
+        } else if (action.equals("complete")) {
+            StatNumCompleteCalls++;
+            StatNumCompleteParams += NumberOfParams;
+            // We're over a choose-envOption field now, so we get a popup table on the side
+            // that returns all possible options (that reduces based on what's already typed)
+            // There'll be another check for type of complete:
+            // -choosing the option type
+            // -choosing the option value
+            // -choosing main option?
+            // lets have a type, and a currentValue (which is what's been typed)
+            String currentValue = request.getParameter("currentValue");
+            if (currentValue == null || currentValue.isEmpty())  {
+                currentValue = "";
+            }
+            String tableXML = template.getReducedXMLList(currentValue,"config");
+            // Respond with parameters + a reduced popup table in xml
+            response.setContentType("text/xml");
+            response.setHeader("Cache-Control", "no-cache"); // Keeps browsers from cacheing web-page (not updating to new values bad)
+            PrintWriter out = response.getWriter();
+            try {
+                out.print("<wrapper>");
+                out.print("<type>"+"config"+"</type>");
+                out.print("<tableXML>"+tableXML+"</tableXML>");
+                out.print("</wrapper>");
+
+            } finally {
+                out.close();
+            }
+
         } else if (action.equals("fill") || action.equals("fillSimple") || action.equals("fillHTML")) {
 
             // Get values of valid parameters
@@ -125,6 +155,7 @@ public class fillTemplate extends HttpServlet {
             if (action.equals("fillSimple") || action.equals("fillHTML")) {
                 // Respond a populated template as a string
                 response.setContentType("text/html;charset=UTF-8");
+                response.setHeader("Cache-Control", "no-cache"); // Keeps browsers from cacheing web-page (not updating to new values bad)
                 PrintWriter out = response.getWriter();
                 try {
                     if (action.equals("fillHTML")) {
@@ -146,7 +177,7 @@ public class fillTemplate extends HttpServlet {
                 StatNumFillParams += NumberOfParams;
                 // Respond with parameters + filled template wrapped in xml
                 response.setContentType("text/xml");
-                //response.setHeader("Cache-Control", "no-cache"); // Not sure why we need this
+                response.setHeader("Cache-Control", "no-cache"); // Keeps browsers from cacheing web-page (not updating to new values bad)
                 PrintWriter out = response.getWriter();
                 try {
                     out.print("<wrapper>");
@@ -171,7 +202,7 @@ public class fillTemplate extends HttpServlet {
         } else {
             context.getRequestDispatcher("/error.jsp").forward(request, response);
         }
-        
+
         StatTotalTimeWorking += (System.currentTimeMillis() - startTime);
     }
 
@@ -196,42 +227,47 @@ public class fillTemplate extends HttpServlet {
     private String getStats() {
         String stats = "";
         System.err.println("soooooo");
-        
-        double totalCalls = StatNumNullCalls+StatNumFillCalls+
-                StatNumFillHTMLCalls+StatNumFillSimpleCalls; // Total # of calls to /fillTemplate
-        double totalParams = StatNumNullParams+StatNumFillParams+
-                StatNumFillHTMLParams+StatNumFillSimpleParams; // Total # Params passed
-        
-        
+
+        double totalCalls = StatNumNullCalls + StatNumFillCalls
+                + StatNumFillHTMLCalls + StatNumFillSimpleCalls; // Total # of calls to /fillTemplate
+        double totalParams = StatNumNullParams + StatNumFillParams
+                + StatNumFillHTMLParams + StatNumFillSimpleParams; // Total # Params passed
+
+
         double avgNull = 0;
         double avgFill = 0;
         double avgHTML = 0;
         double avgSimple = 0;
         double avgTotal = 0;
-        
-        if (StatNumNullCalls>0)
-            avgNull = (double)StatNumNullParams/StatNumNullCalls;
-        if (StatNumFillCalls>0)
-            avgFill = (double)StatNumFillParams/StatNumFillCalls;
-        if (StatNumFillHTMLCalls>0)
-            avgHTML = (double)StatNumFillHTMLParams/StatNumFillHTMLCalls;
-        if (StatNumFillSimpleCalls>0)
-            avgSimple = (double)StatNumFillSimpleParams/StatNumFillSimpleCalls;
-        if (totalCalls>0)
-            avgTotal = (double)totalParams/totalCalls;
-            
-            
-        
+
+        if (StatNumNullCalls > 0) {
+            avgNull = (double) StatNumNullParams / StatNumNullCalls;
+        }
+        if (StatNumFillCalls > 0) {
+            avgFill = (double) StatNumFillParams / StatNumFillCalls;
+        }
+        if (StatNumFillHTMLCalls > 0) {
+            avgHTML = (double) StatNumFillHTMLParams / StatNumFillHTMLCalls;
+        }
+        if (StatNumFillSimpleCalls > 0) {
+            avgSimple = (double) StatNumFillSimpleParams / StatNumFillSimpleCalls;
+        }
+        if (totalCalls > 0) {
+            avgTotal = (double) totalParams / totalCalls;
+        }
+
+
+
         stats += "Name(action) ,        # of Calls        , Average # of Parameters passed (including the action) <br>";
-        stats += "none         , " + StatNumNullCalls + " , "+avgNull+"<br>";
-        stats += "fill         , " + StatNumFillCalls + " , "+avgFill+"<br>";
-        stats += "fillHTML     , " + StatNumFillHTMLCalls + " , "+avgHTML+"<br>";
-        stats += "fillSimple   , " + StatNumFillSimpleCalls + " , "+avgSimple+"<br>";
-        stats += "Total        , " + totalCalls + " , "+avgTotal+"<br>";
+        stats += "none         , " + StatNumNullCalls + " , " + avgNull + "<br>";
+        stats += "fill         , " + StatNumFillCalls + " , " + avgFill + "<br>";
+        stats += "fillHTML     , " + StatNumFillHTMLCalls + " , " + avgHTML + "<br>";
+        stats += "fillSimple   , " + StatNumFillSimpleCalls + " , " + avgSimple + "<br>";
+        stats += "Total        , " + totalCalls + " , " + avgTotal + "<br>";
         stats += "<br>";
-        stats += "Total Calls of any kind: "+StatTotalCalls+"<br>";
-        stats += "Total time working: "+StatTotalTimeWorking/1000+" seconds<br>";
-        stats += "Average Response time: "+(double)StatTotalTimeWorking/StatTotalCalls+" milliseconds per call<br>";
+        stats += "Total Calls of any kind: " + StatTotalCalls + "<br>";
+        stats += "Total time working: " + StatTotalTimeWorking / 1000 + " seconds<br>";
+        stats += "Average Response time: " + (double) StatTotalTimeWorking / StatTotalCalls + " milliseconds per call<br>";
 
         return stats;
     }
