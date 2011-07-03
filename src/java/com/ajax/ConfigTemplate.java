@@ -201,6 +201,9 @@ class ConfigTemplate {
             return null;
         }
 
+        if (!options.containsKey(optionName)){ // not there, return nothing
+            return out;
+        }
         EnvConfigOption envOption = (EnvConfigOption) options.get(optionName);
         out += "<option>";
         out += "<id>" + envOption.getName() + "</id>";

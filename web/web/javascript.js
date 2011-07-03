@@ -11,6 +11,8 @@ function init() {
     envOptionTable = document.getElementById("envOption-table");
     
     envConfigTable = document.getElementById("envConfig-table");
+    envBuildTable = document.getElementById("envBuild-table");
+    envRunTable = document.getElementById("envRun-table");
     
     envConfigField = document.getElementById("envConfig-field");
     envBuildField = document.getElementById("envBuild-field");
@@ -102,22 +104,34 @@ function callback(req) {
 //    value is the value shown initially in the text input field
 //    default value is the value shown when mouse hovers over the readable Name
 //    description is put in title, showing up when mouse hovers over field
-function addOption(readableName, name_id, value, defaultValue, description) {
+function addOption(readableName, name_id, value, defaultValue, description, optionType) {
     var row;
+    var envTable;
+    //optionType is string config/build/run
+    
+    if (optionType == "config") {
+        envTable = envConfigTable;
+    } else if (optionType == "build") {
+        envTable = envBuildTable;
+    } else if (optionType == "run") {
+        envTable = envRunTable;
+    } else {
+        alert("wrong optionType given in javascript.js addOption() : optionType="+optionType);
+    }
     
     if (isIE) {
-        envConfigTable.style.display = 'block';
-        row = envConfigTable.insertRow(envconfigTable.rows.length);
+        envTable.style.display = 'block';
+        row = envTable.insertRow(envconfigTable.rows.length);
         namecell = row.insertCell(0);
         valuecell = row.insertCell(1);
     } else {
-        envConfigTable.style.display = 'table';
+        envTable.style.display = 'table';
         row = document.createElement("tr");
         namecell = document.createElement("td");
         valuecell = document.createElement("td");
         row.appendChild(namecell);
         row.appendChild(valuecell);
-        envConfigTable.appendChild(row);
+        envTable.appendChild(row);
     }
     var nameElement = document.createElement("normalText");
     nameElement.setAttribute("title", "xml option: "+ name_id +", default: "+defaultValue);
@@ -149,7 +163,8 @@ function parseMessages(responseXML) {
     } else if (responseXML.getElementsByTagName("wrapper").length != 0) {
         if (responseXML.getElementsByTagName("tableXML").length != 0) {
             // popup box stuff
-            doPopupTable(responseXML.getElementsByTagName("tableXML"));
+            doPopupTable(responseXML.getElementsByTagName("tableXML"),
+            responseXML.getElementsByTagName("type")[0].childNodes[0].nodeValue); // config/build/run
         } else { // Normal template update
             updateTemplateField(responseXML.getElementsByTagName("template")[0]); 
         }
@@ -163,8 +178,9 @@ function parseMessages(responseXML) {
     }
 }
 
-function doPopupTable(xmlTable) {
+function doPopupTable(xmlTable, optionType) {
     //templateField.textContent = "booop: " + xmlTable[0].childNodes.length;
+    // optionType is config/build/run string
     clearTable(); // Might remove this if it's a waste
     //templateField.textContent = "popup table length: " + xmlTable[0].childNodes.length + "\n";
     addPopUpRow("Name","Default Value","Description","ID");
@@ -190,12 +206,12 @@ function doPopupTable(xmlTable) {
                 description = description.nodeValue;
             }
             
-            addPopUpRow(id, defaultValue, description, id); // not using longname, using id instead
+            addPopUpRow(id, defaultValue, description, id, optionType); // not using longname, using id instead
         }
     }
 }
 
-function addPopUpRow(longname, defaultValue, description, id) {
+function addPopUpRow(longname, defaultValue, description, id, optionType) {
     var row;
     var cellId;
     var cellDefault;
@@ -225,8 +241,7 @@ function addPopUpRow(longname, defaultValue, description, id) {
     linkElement = document.createElement("a");
     linkElement.className = "popupItem";
     //http://localhost:8084/CESMCaseMaker/fillTemplate?action=addEnvOption&option=RUN_TYPE
-    var type = "config";
-    linkElement.setAttribute("href", "javascript:doAddOption(\""+id+"\",\""+type+"\")");
+    linkElement.setAttribute("href", "javascript:doAddOption(\""+id+"\",\""+optionType+"\")");
     linkElement.setAttribute("tabindex", "5");
     linkElement.appendChild(document.createTextNode(longname));
     cellId.appendChild(linkElement);
@@ -263,7 +278,7 @@ function addOptionFields(optionsEC) {
         description = "";
     }
     // Add actual field to index page
-    addOption(name + ":", id, defaultValue, defaultValue, description);
+    addOption(name + ":", id, defaultValue, defaultValue, description, type);
     // Now add option to array for when calling fillRequest with value in field
     optionsArray.push(id);
 }

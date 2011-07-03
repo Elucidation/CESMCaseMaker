@@ -125,7 +125,7 @@ public class fillTemplate extends HttpServlet {
             PrintWriter out = response.getWriter();
             try {
                 out.print("<wrapper>");
-                out.print("<type>"+"config"+"</type>");
+                out.print("<type>"+typeOfEnvOption+"</type>");
                 out.print("<tableXML>"+tableXML+"</tableXML>");
                 out.print("</wrapper>");
 
@@ -201,8 +201,9 @@ public class fillTemplate extends HttpServlet {
         } else if (action.equals("addEnvOption")) {
             // Return XML with new option id, readable name ,default and description
             String optionName = request.getParameter("option");
+            String optionType = request.getParameter("type");
             //String type = request.getParameter("type");
-            String singleXML = template.getOptionXML(optionName,"config");
+            String singleXML = template.getOptionXML(optionName,optionType);
             response.setContentType("text/xml;charset=UTF-8");
             PrintWriter out = response.getWriter();
             try {

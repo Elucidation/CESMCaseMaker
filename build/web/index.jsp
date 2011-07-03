@@ -134,6 +134,11 @@
                                     </tr>
                                     <tr>
                                         <td colSpan="2">
+                                            <table id="envBuild-table"></table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="2">
                                             <strong><a href="http://www.cesm.ucar.edu/models/cesm1.0/cesm/cesm_doc/a5005.html">Environment Run XML Options</a></strong>
                                         </td>
                                     </tr>
@@ -146,6 +151,11 @@
                                                    onkeyup="doAutoComplete(this.id);"
                                                    tabindex="20"
                                                    title="Insert Environment Run Option"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="2">
+                                            <table id="envRun-table"></table>
                                         </td>
                                     </tr>
                                 </tbody>
