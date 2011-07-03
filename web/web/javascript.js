@@ -1,4 +1,6 @@
 var isIE;
+var optionsArray = new Array(); // Contains envOption names chosen ex. RUN_TYPE
+
 function init() {    
     caseField = document.getElementById("case-field");
     resField = document.getElementById("res-field");
@@ -7,6 +9,9 @@ function init() {
     
     
     envOptionTable = document.getElementById("envOption-table");
+    
+    envConfigTable = document.getElementById("envConfig-table");
+    
     envConfigField = document.getElementById("envConfig-field");
     envBuildField = document.getElementById("envBuild-field");
     envRunField = document.getElementById("envRun-field");
@@ -24,6 +29,12 @@ function doCompletion() {
     "&resolution="+escape(resField.value)+
     "&compset="+escape(compsetField.value)+
     "&machine="+escape(machField.value);
+
+    for (i=0; i<optionsArray.length; i++) {
+        var name = optionsArray[i];
+        var value = escape(document.getElementById(name+"-field").value);
+        url += "&"+name+"="+value;
+    }
     
     var req = initRequest();
     req.open("GET",url,true);
@@ -43,6 +54,17 @@ function doAutoComplete(id) {
         url += "&type=run&currentValue="+escape(envRunField.value);
     }
     
+    var req = initRequest();
+    req.open("GET",url,true);
+    req.onreadystatechange = function(){
+        callback(req)
+    };
+    req.send(null);
+}
+
+function doAddOption(id,type) {
+    var url = "fillTemplate?action=addEnvOption"+
+    "&option="+id+"&type="+type;
     var req = initRequest();
     req.open("GET",url,true);
     req.onreadystatechange = function(){
@@ -106,7 +128,8 @@ function addOption(readableName, name_id, value, defaultValue, description) {
     formElement.setAttribute("type","text");
     formElement.setAttribute("id",name_id+"-field");
     formElement.setAttribute("value",value);
-    formElement.setAttribute("onkeyup","doEnvConfAdd();");
+    formElement.setAttribute("tabindex",20);
+    formElement.setAttribute("onkeyup","doCompletion();");
     formElement.setAttribute("title",description);
     valuecell.appendChild(formElement);
 }
@@ -130,6 +153,11 @@ function parseMessages(responseXML) {
         } else { // Normal template update
             updateTemplateField(responseXML.getElementsByTagName("template")[0]); 
         }
+    } else if (responseXML.getElementsByTagName("option").length != 0) {
+        // Add option
+        //http://localhost:8084/CESMCaseMaker/fillTemplate?action=addEnvOption&option=RUN_TYPE&type=config
+        addOptionFields(responseXML.getElementsByTagName("option")[0]);
+        templateField.textContent = "not bad ";
     } else {
         templateField.textContent = "--Bad Response--\n";
     }
@@ -196,7 +224,9 @@ function addPopUpRow(longname, defaultValue, description, id) {
 
     linkElement = document.createElement("a");
     linkElement.className = "popupItem";
-    linkElement.setAttribute("href", "NotImplementedYet &id=" + id);
+    //http://localhost:8084/CESMCaseMaker/fillTemplate?action=addEnvOption&option=RUN_TYPE
+    var type = "config";
+    linkElement.setAttribute("href", "javascript:doAddOption(\""+id+"\",\""+type+"\")");
     linkElement.setAttribute("tabindex", "5");
     linkElement.appendChild(document.createTextNode(longname));
     cellId.appendChild(linkElement);
@@ -208,26 +238,32 @@ function updateTemplateField(caseElement) {
     templateField.textContent = caseElement.childNodes[0].nodeValue;
 }
 function addOptionFields(optionsEC) {
-    //clearTable(); // Start fresh
-    if (optionsEC.childNodes.length > 0) {
-        for (loop = 0; loop < optionsEC.childNodes.length; loop++) {
-            var option = optionsEC.childNodes[loop];
-            // Format:
-            /*<envConfigOption>
-             *  <id></id>
-             *  <name></name>
-             *  <defaultValue></defaultValue>
-             *  <readableName></readableName>
-             *  <description></description>
-             *</envConfigOption>
-             */
-            var name = option.getElementsByTagName("name")[0].childNodes[0].nodeValue;
-            var value = option.getElementsByTagName("value")[0].childNodes[0].nodeValue;
-            var defaultValue = option.getElementsByTagName("defaultValue")[0].childNodes[0].nodeValue;
-            var readableName = option.getElementsByTagName("readableName")[0].childNodes[0].nodeValue;
-            var description = option.getElementsByTagName("description")[0].childNodes[0].nodeValue;
-                
-            addOption(readableName + ":", name, value, defaultValue, description);
-        }
+    var option = optionsEC;
+    // Format:
+    /*<option>
+     *  <id></id>
+     *  <name></name>
+     *  <default></default>
+     *  <description></description>
+     *  <type>(config/build/run)</type>
+     *</option>
+     */
+    var id = option.getElementsByTagName("id")[0].childNodes[0].nodeValue;
+    var name = option.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+    var defaultValue;
+    try {
+        defaultValue = option.getElementsByTagName("default")[0].childNodes[0].nodeValue;
+    } catch (e){
+        defaultValue = "";
     }
+    var description = option.getElementsByTagName("description")[0].childNodes[0].nodeValue;
+    var type = option.getElementsByTagName("type")[0].childNodes[0].nodeValue;
+    
+    if (description == undefined) {
+        description = "";
+    }
+    // Add actual field to index page
+    addOption(name + ":", id, defaultValue, defaultValue, description);
+    // Now add option to array for when calling fillRequest with value in field
+    optionsArray.push(id);
 }

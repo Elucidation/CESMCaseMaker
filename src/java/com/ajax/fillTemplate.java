@@ -198,6 +198,18 @@ public class fillTemplate extends HttpServlet {
             }
 
 
+        } else if (action.equals("addEnvOption")) {
+            // Return XML with new option id, readable name ,default and description
+            String optionName = request.getParameter("option");
+            //String type = request.getParameter("type");
+            String singleXML = template.getOptionXML(optionName,"config");
+            response.setContentType("text/xml;charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            try {
+                out.print(singleXML);
+            } finally {
+                out.close();
+            }
         } else if (action.equals("stats")) {
             response.setContentType("text/html;charset=UTF-8");
             PrintWriter out = response.getWriter();

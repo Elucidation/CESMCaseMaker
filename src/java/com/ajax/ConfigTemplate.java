@@ -70,28 +70,29 @@ class ConfigTemplate {
         String outTemplate = template;
         keepSafe();
         for (int i = 0; i < placeholders.length; i++) {
-            //System.err.println(placeholders[i]);
-            // if it's an env_config.xml change, do special replace to keep location
-            if (envConfigTable.getEnvConfigOptions().containsKey(placeholders[i].toUpperCase())) {
-                // Only Env Config works atm but any env xml can be implemented
-                outTemplate = outTemplate.replaceFirst(ENV_LOCATION_PLACEHOLDERS[0],
-                        ENV_LOCATION_PLACEHOLDERS[0] + "\n"
-                        + xmlChange("env_conf.xml", placeholders[i].toUpperCase(), replacements[i]) // add xmlchange
-                        );
-            } else if (envConfigTable.getEnvBuildOptions().containsKey(placeholders[i].toUpperCase())) {
-                // Only Env Config works atm but any env xml can be implemented
-                outTemplate = outTemplate.replaceFirst(ENV_LOCATION_PLACEHOLDERS[1],
-                        ENV_LOCATION_PLACEHOLDERS[1] + "\n"
-                        + xmlChange("env_build.xml", placeholders[i].toUpperCase(), replacements[i]) // add xmlchange
-                        );
-            } else if (envConfigTable.getEnvRunOptions().containsKey(placeholders[i].toUpperCase())) {
-                // Only Env Config works atm but any env xml can be implemented
-                outTemplate = outTemplate.replaceFirst(ENV_LOCATION_PLACEHOLDERS[2],
-                        ENV_LOCATION_PLACEHOLDERS[2] + "\n"
-                        + xmlChange("env_run.xml", placeholders[i].toUpperCase(), replacements[i]) // add xmlchange
-                        );
-            } else {
-                outTemplate = outTemplate.replaceAll(placeholders[i].toUpperCase(), replacements[i]);
+            if (!replacements[i].isEmpty()) { // Only if replacement is not empty
+                // if it's an env_config.xml change, do special replace to keep location
+                if (envConfigTable.getEnvConfigOptions().containsKey(placeholders[i].toUpperCase())) {
+                    // Only Env Config works atm but any env xml can be implemented
+                    outTemplate = outTemplate.replaceFirst(ENV_LOCATION_PLACEHOLDERS[0],
+                            ENV_LOCATION_PLACEHOLDERS[0] + "\n"
+                            + xmlChange("env_conf.xml", placeholders[i].toUpperCase(), replacements[i]) // add xmlchange
+                            );
+                } else if (envConfigTable.getEnvBuildOptions().containsKey(placeholders[i].toUpperCase())) {
+                    // Only Env Config works atm but any env xml can be implemented
+                    outTemplate = outTemplate.replaceFirst(ENV_LOCATION_PLACEHOLDERS[1],
+                            ENV_LOCATION_PLACEHOLDERS[1] + "\n"
+                            + xmlChange("env_build.xml", placeholders[i].toUpperCase(), replacements[i]) // add xmlchange
+                            );
+                } else if (envConfigTable.getEnvRunOptions().containsKey(placeholders[i].toUpperCase())) {
+                    // Only Env Config works atm but any env xml can be implemented
+                    outTemplate = outTemplate.replaceFirst(ENV_LOCATION_PLACEHOLDERS[2],
+                            ENV_LOCATION_PLACEHOLDERS[2] + "\n"
+                            + xmlChange("env_run.xml", placeholders[i].toUpperCase(), replacements[i]) // add xmlchange
+                            );
+                } else {
+                    outTemplate = outTemplate.replaceAll(placeholders[i].toUpperCase(), replacements[i]);
+                }
             }
         }
 
@@ -179,6 +180,35 @@ class ConfigTemplate {
                 out += "</option>";
             }
         }
+        return out;
+    }
+
+    String getOptionXML(String optionName, String optionType) {
+        String out = "";
+        HashMap options;
+        Set keys;
+        if (optionType.contentEquals("config")) {
+            options = envConfigTable.getEnvConfigOptions();
+            keys = envConfigTable.getEnvConfigOptionKeys();
+        } else if (optionType.contentEquals("build")) {
+            options = envConfigTable.getEnvBuildOptions();
+            keys = envConfigTable.getEnvBuildOptionKeys();
+        } else if (optionType.contentEquals("run")) {
+            options = envConfigTable.getEnvRunOptions();
+            keys = envConfigTable.getEnvRunOptionKeys();
+        } else {
+            // Silly wank, return nothing
+            return null;
+        }
+
+        EnvConfigOption envOption = (EnvConfigOption) options.get(optionName);
+        out += "<option>";
+        out += "<id>" + envOption.getName() + "</id>";
+        out += "<name>" + envOption.getReadableName() + "</name>";
+        out += "<default>" + envOption.getDefaultValue() + "</default>";
+        out += "<description>" + envOption.getDescription() + "</description>";
+        out += "<type>" + optionType + "</type>";
+        out += "</option>";
         return out;
     }
 }

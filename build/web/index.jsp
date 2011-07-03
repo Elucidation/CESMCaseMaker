@@ -113,6 +113,11 @@
                                     </tr>
                                     <tr>
                                         <td colSpan="2">
+                                            <table id="envConfig-table"></table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="2">
                                             <strong><a href="http://www.cesm.ucar.edu/models/cesm1.0/cesm/cesm_doc/a4856.html">Environment Build XML Options</a></strong>
                                         </td>
                                     </tr>
