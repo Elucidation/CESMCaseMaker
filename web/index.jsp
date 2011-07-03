@@ -164,7 +164,7 @@
                             <!-- OPTIONS END -->
                         </td>
                         <td>
-                            <textarea id="template-field" rows="20" cols="80"></textarea>
+                            <textarea id="template-field" rows="40" cols="80" tabindex="30"></textarea>
                         </td>
                     </tr>
                 </tbody>

@@ -211,6 +211,14 @@ public class fillTemplate extends HttpServlet {
             } finally {
                 out.close();
             }
+        } else if (action.equals("getCurrentAsLink")) {
+            response.setContentType("text/html;charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            try {
+                out.print(template.getCurrentTemplateAsLink());
+            } finally {
+                out.close();
+            }
         } else if (action.equals("stats")) {
             response.setContentType("text/html;charset=UTF-8");
             PrintWriter out = response.getWriter();
