@@ -146,6 +146,7 @@ function addOption(readableName, name_id, value, defaultValue, description, opti
     formElement.setAttribute("onkeyup","doCompletion();");
     formElement.setAttribute("title",description);
     valuecell.appendChild(formElement);
+    formElement.focus();
 }
 
 function clearTable() {
@@ -172,7 +173,6 @@ function parseMessages(responseXML) {
         // Add option
         //http://localhost:8084/CESMCaseMaker/fillTemplate?action=addEnvOption&option=RUN_TYPE&type=config
         addOptionFields(responseXML.getElementsByTagName("option")[0]);
-        templateField.textContent = "not bad ";
     } else {
         templateField.textContent = "--Bad Response--\n";
     }
@@ -281,4 +281,6 @@ function addOptionFields(optionsEC) {
     addOption(name + ":", id, defaultValue, defaultValue, description, type);
     // Now add option to array for when calling fillRequest with value in field
     optionsArray.push(id);
+    
+    doCompletion();
 }
