@@ -284,3 +284,20 @@ function addOptionFields(optionsEC) {
     
     doCompletion();
 }
+
+
+// Still needs to be implemented
+// So possibility is:
+// Calling get Current as link provides a fillTemplate fill link
+// That will return an xml with all the parameters&values & a filled template
+// Need to be able to look at that and say, I need these many fields (since they won't exist)
+// and add all those option fields including the value in the field
+function doSetToLink() {
+    var url = "fillTemplate?action=getCurrentAsLink";
+    var req = initRequest();
+    req.open("GET",url,true);
+    req.onreadystatechange = function(){
+        callback(req)
+    };
+    req.send(null);
+}

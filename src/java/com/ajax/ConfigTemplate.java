@@ -67,7 +67,7 @@ class ConfigTemplate {
     }
     
     String getCurrentTemplateAsLink() {
-        String out = "fillTemplate?action=fill";
+        String out = "/fillTemplate?action=fillHTML";
         for (int i=0;i<placeholders.length;i++){
             out += "&"+placeholders[i]+"="+replacements[i];
         }
