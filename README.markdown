@@ -9,4 +9,4 @@ It does this by:
 
 A live demo was previously up on Amazon EC2, but that costs money to keep going. For now here is a screenshot, or you can download the code and run it locally.
 
-![GUI Screenshot](http://i.imgur.com/hGCcY.png)
+![GUI Screenshot](http://i.imgur.com/qeBlX.png)
